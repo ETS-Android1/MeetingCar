@@ -3,6 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2275" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2275" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/drawable/icon_location.xml" value="0.2275" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/drawable/icon_price.xml" value="0.1185" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/drawable/icon_type.xml" value="0.206" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/ad_recyclerview.xml" value="0.33" />
         <entry key="..\:/Projet_FAC/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
       </map>
     </option>
