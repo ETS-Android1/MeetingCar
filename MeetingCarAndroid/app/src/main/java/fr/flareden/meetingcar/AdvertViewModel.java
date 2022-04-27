@@ -1,5 +1,7 @@
 package fr.flareden.meetingcar;
 
+import fr.flareden.meetingcar.metier.entity.Annonce;
+
 public class AdvertViewModel {
 
     public enum TYPE {
@@ -10,18 +12,28 @@ public class AdvertViewModel {
     // ATTRIBUTES
     private String title, desc, loc, price;
     private TYPE type;
+    private int id;
     // private images?
 
     // CONSTRUCTOR
-    AdvertViewModel(String title, String desc, String loc, String price, TYPE type) {
+    AdvertViewModel(int id, String title, String desc, String loc, String price, TYPE type) {
+        this.id = id;
         this.title = title;
         this.desc = desc;
         this.loc = loc;
         this.price = price;
         this.type = type;
     }
+    AdvertViewModel(Annonce annonce){
+
+    }
+
 
     // GETTERS
+    public int getId() {
+        return this.id;
+    }
+
     public String getTitle() {
         return this.title;
     }
