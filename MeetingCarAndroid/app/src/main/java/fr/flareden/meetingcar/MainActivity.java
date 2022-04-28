@@ -1,20 +1,30 @@
 package fr.flareden.meetingcar;
 
-import androidx.annotation.NonNull;
+import android.os.Bundle;
+import android.view.Menu;
+import android.widget.SearchView;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.SearchView;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
+import fr.flareden.meetingcar.databinding.ActivityMainBinding;
+
 public class MainActivity extends AppCompatActivity {
 
+    // NAVIGATION DRAWER
+    private AppBarConfiguration mAppBarConfiguration;
+    private ActivityMainBinding binding;
+
+    // RECYCLER VIEW
     private RecyclerView recycler;
     private AdvertAdapter adapter;
     private SearchView search;
@@ -22,7 +32,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        // BINDING
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // NAVIGATION DRAWER
+        setSupportActionBar(binding.appBarMain.toolbar);
+        DrawerLayout drawer = binding.drawerLayout;
+        NavigationView navigationView = binding.navView;
+
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_mail, R.id.nav_follow, R.id.nav_announces, R.id.nav_history)
+                .setOpenableLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
 
         // FILL DATA (MAKE IT ON SQL)
         ArrayList<AdvertViewModel> data = new ArrayList<>();
@@ -30,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         data.add(new AdvertViewModel(1, "B1", "B2", "B3", "B4", AdvertViewModel.TYPE.SELL));
         data.add(new AdvertViewModel(2, "C1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
         data.add(new AdvertViewModel(3, "D1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
-
+/*
         // RECYCLER VIEW INIT
         recycler = findViewById(R.id.rv_annonce);
         adapter = new AdvertAdapter(data);
@@ -75,5 +101,19 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+ */
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 }

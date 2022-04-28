@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation.xml"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="fr.flareden.meetingcar.ui.home.HomeFragment"
+        android:label="menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_mail"
+        android:name="fr.flareden.meetingcar.ui.mail.MailFragment"
+        android:label="menu_mail"
+        tools:layout="@layout/fragment_mail" />
+
+    <fragment
+        android:id="@+id/nav_follow"
+        android:name="fr.flareden.meetingcar.ui.follow.FollowFragment"
+        android:label="menu_follow"
+        tools:layout="@layout/fragment_follow" />
+
+    <fragment
+        android:id="@+id/nav_announces"
+        android:name="fr.flareden.meetingcar.ui.announces.AnnouncesFragment"
+        android:label="menu_announces"
+        tools:layout="@layout/fragment_announces" />
+
+    <fragment
+        android:id="@+id/nav_history"
+        android:name="fr.flareden.meetingcar.ui.history.HistoryFragment"
+        android:label="menu_history"
+        tools:layout="@layout/fragment_history" />
+
+</navigation>

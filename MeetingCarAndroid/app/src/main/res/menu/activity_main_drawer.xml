@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_baseline_person_24"
+            android:title="Profil" />
+        <item
+            android:id="@+id/nav_mail"
+            android:icon="@drawable/ic_baseline_email_24"
+            android:title="Courriel" />
+        <item
+            android:id="@+id/nav_follow"
+            android:icon="@drawable/ic_baseline_push_pin_24"
+            android:title="Suivi" />
+        <item
+            android:id="@+id/nav_announces"
+            android:icon="@drawable/ic_baseline_announcement_24"
+            android:title="Mes annonces" />
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_baseline_history_24"
+            android:title="Historique d'achat" />
+    </group>
+
+</menu>

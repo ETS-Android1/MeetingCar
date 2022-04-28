@@ -38,7 +38,7 @@
         android:maxWidth="100dp"
         android:maxHeight="100dp"
         android:scaleType="fitCenter"
-        tools:srcCompat="@drawable/ic_launcher_background" />
+        tools:srcCompat="@drawable/ic_baseline_123_24" />
 
     <View
         android:id="@+id/rv_div_3"
@@ -108,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    app:srcCompat="@drawable/icon_location" />
+                    app:srcCompat="@drawable/ic_baseline_location_on_24" />
 
                 <TextView
                     android:id="@+id/rv_tv_loc"
@@ -130,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    app:srcCompat="@drawable/icon_price" />
+                    app:srcCompat="@drawable/ic_baseline_attach_money_24" />
 
                 <TextView
                     android:id="@+id/rv_tv_price"
@@ -152,7 +152,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    app:srcCompat="@drawable/icon_type" />
+                    app:srcCompat="@drawable/ic_baseline_directions_car_24" />
 
                 <TextView
                     android:id="@+id/rv_tv_type"
