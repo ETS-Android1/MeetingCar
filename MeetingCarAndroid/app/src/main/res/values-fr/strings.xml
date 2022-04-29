@@ -26,4 +26,5 @@
     <string name="error_empty">Vide</string>
     <string name="password_no_match">Les mots de passes ne sont pas identique</string>
     <string name="email_already_use">Email déjà utilisée</string>
+    <string name="disconnect">Déconnexion</string>
 </resources>

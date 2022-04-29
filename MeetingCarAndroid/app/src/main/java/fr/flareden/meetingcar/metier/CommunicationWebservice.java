@@ -1,43 +1,26 @@
 package fr.flareden.meetingcar.metier;
 
 
-import android.util.JsonReader;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
 import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
 
 public class CommunicationWebservice {
+    public static boolean CONNECTED = false;
     private static String BASE_URL = "https://www.flareden.fr:9000/";
     private static CommunicationWebservice INSTANCE = null;
     private String token = "";
@@ -116,6 +99,7 @@ public class CommunicationWebservice {
                             token = json.getString("access_token");
                             retour = Client.fromJsonObject(json.getJSONObject("user"));
                             success = true;
+                            CONNECTED = true;
                         } else {
                             unknown = error.compareToIgnoreCase("unknown") == 0;
                         }
@@ -136,6 +120,11 @@ public class CommunicationWebservice {
                 }
             }
         }).start();
+    }
+
+    public void disconnect() {
+        // TODO
+        CONNECTED = false;
     }
 
     public void isLogin(IConnectHandler callback) {
@@ -161,6 +150,7 @@ public class CommunicationWebservice {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                CONNECTED = reponse;
                 callback.askIsLogin(reponse);
             }).start();
         }

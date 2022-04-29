@@ -26,4 +26,5 @@
     <string name="error_empty">Empty</string>
     <string name="password_no_match">Passwords does not match</string>
     <string name="email_already_use">Email already use</string>
+    <string name="disconnect">Disconnect</string>
 </resources>

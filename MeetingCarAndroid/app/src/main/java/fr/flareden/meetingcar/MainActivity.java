@@ -1,7 +1,10 @@
 package fr.flareden.meetingcar;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,12 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
-
 import fr.flareden.meetingcar.databinding.ActivityMainBinding;
+import fr.flareden.meetingcar.metier.CommunicationWebservice;
 
 public class MainActivity extends AppCompatActivity {
-
     // NAVIGATION DRAWER
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -43,20 +44,36 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = binding.navView;
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_listAds, R.id.nav_home, R.id.nav_mail, R.id.nav_follow, R.id.nav_announces, R.id.nav_history)
+                R.id.nav_listAds, R.id.nav_home, R.id.nav_mail, R.id.nav_follow, R.id.nav_announces, R.id.nav_history, R.id.nav_login)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        // LOGIN BUTTON
+        ((Button) findViewById(R.id.buttonLogin)).setOnClickListener((View view) -> {
+            if (!CommunicationWebservice.CONNECTED) {
+                navController.popBackStack();
+                navController.navigate(R.id.nav_login);
+                drawer.closeDrawer((int) Gravity.START);
+
+            } else {
+                CommunicationWebservice.getINSTANCE().disconnect();
+                Button b = findViewById(R.id.buttonLogin);
+                b.setText(R.string.action_sign_in);
+            }
+        });
+
+
+        /*
         // FILL DATA (MAKE IT ON SQL)
         ArrayList<AdvertViewModel> data = new ArrayList<>();
         data.add(new AdvertViewModel(0, "A1", "A2", "A3", "A4", AdvertViewModel.TYPE.RENT));
         data.add(new AdvertViewModel(1, "B1", "B2", "B3", "B4", AdvertViewModel.TYPE.SELL));
         data.add(new AdvertViewModel(2, "C1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
         data.add(new AdvertViewModel(3, "D1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
-/*
+
         // RECYCLER VIEW INIT
         recycler = findViewById(R.id.rv_annonce);
         adapter = new AdvertAdapter(data);
