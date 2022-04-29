@@ -29,4 +29,5 @@
             android:icon="@drawable/ic_baseline_history_24"
             android:title="Historique d'achat" />
     </group>
+
 </menu>

@@ -2,11 +2,8 @@ package fr.flareden.meetingcar.metier;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
-import fr.flareden.meetingcar.MainActivity;
-import fr.flareden.meetingcar.login.LoginActivity;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.entity.messagerie.Messagerie;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
@@ -59,9 +56,7 @@ public class Metier  {
 
     }
 
-    public void launch_connection(Context context, Class<?> classe){
-        Intent loginIntent = new Intent(context, LoginActivity.class);
-        loginIntent.putExtra("calling-activity", classe);
-        context.startActivity(loginIntent);
+    public Client getUtilisateur() {
+        return utilisateur;
     }
 }

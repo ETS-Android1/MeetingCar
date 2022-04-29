@@ -1,4 +1,4 @@
-package fr.flareden.meetingcar.login;
+package fr.flareden.meetingcar.ui.login;
 
 import android.content.res.Resources;
 import android.text.Editable;
