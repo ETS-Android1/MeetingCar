@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
         android:background="?android:attr/listDivider" />
 
     <TextView
@@ -25,8 +26,8 @@
         android:id="@+id/rv_div_2"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="4dp"
         android:background="?android:attr/listDivider" />
 
     <ImageView
@@ -78,7 +79,7 @@
             <TextView
                 android:id="@+id/rv_tv_desc"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="75dp"
                 android:layout_marginBottom="2dp"
                 android:textAlignment="textStart" />
 

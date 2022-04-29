@@ -24,7 +24,7 @@
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/drawable/icon_type.xml" value="0.206" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/activity_login.xml" value="0.3875" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/ad_recyclerview.xml" value="0.33" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/ad_recyclerview.xml" value="0.5" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/app_bar_main.xml" value="0.2265625" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/content_main.xml" value="0.2265625" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/fragment_advert_detail.xml" value="0.3087121212121212" />
@@ -39,10 +39,11 @@
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/fragment_pin.xml" value="0.3875" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/fragment_profile.xml" value="0.22282608695652173" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/fragment_slideshow.xml" value="0.2265625" />
-        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/nav_header_main.xml" value="0.25" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/nav_header_main.xml" value="0.33" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/menu/activity_main_drawer.xml" value="0.3875" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/menu/main.xml" value="0.3265625" />
         <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.154" />
+        <entry key="..\:/Cours/Master/M1/S2_[HAI811I] - Programmation mobile/Projet/MeetingCar/MeetingCarAndroid/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.22" />
         <entry key="..\:/Projet_FAC/MeetingCar/MeetingCarAndroid/app/src/main/res/layout/activity_main.xml" value="0.358695652173913" />
       </map>
     </option>
