@@ -1,12 +1,10 @@
 package fr.flareden.meetingcar;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -14,7 +12,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -53,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             if (!CommunicationWebservice.CONNECTED) {
                 navController.popBackStack();
                 navController.navigate(R.id.nav_login);
-                drawer.closeDrawer((int) Gravity.START);
+                drawer.closeDrawer(Gravity.START);
 
             } else {
                 Metier.getINSTANCE().disconnect();

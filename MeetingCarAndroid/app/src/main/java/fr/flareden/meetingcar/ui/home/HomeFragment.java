@@ -1,7 +1,9 @@
 package fr.flareden.meetingcar.ui.home;
 
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
@@ -9,9 +11,11 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import fr.flareden.meetingcar.AdvertAdapter;
+import java.util.ArrayList;
+
 import fr.flareden.meetingcar.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
@@ -25,12 +29,9 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel galleryViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
-/*
         // FILL DATA (MAKE IT ON SQL)
         ArrayList<AdvertViewModel> data = new ArrayList<>();
         data.add(new AdvertViewModel(0, "A1", "A2", "A3", "A4", AdvertViewModel.TYPE.RENT));
@@ -39,13 +40,13 @@ public class HomeFragment extends Fragment {
         data.add(new AdvertViewModel(3, "D1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
 
         // RECYCLER VIEW INIT
-        recycler = findViewById(R.id.rv_annonce);
+        recycler = binding.rvAnnounce;
         adapter = new AdvertAdapter(data);
         recycler.setAdapter(adapter);
-        recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recycler.setLayoutManager(new LinearLayoutManager(this.getActivity(), LinearLayoutManager.VERTICAL, false));
 
         // GESTURE
-        GestureDetector gd = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener(){
+        GestureDetector gd = new GestureDetector(this.getActivity(), new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
                 return true;
@@ -69,7 +70,7 @@ public class HomeFragment extends Fragment {
         });
 
         // SEARCH
-        search = findViewById(R.id.search_annonce);
+        search = binding.searchAnnounce;
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -82,9 +83,6 @@ public class HomeFragment extends Fragment {
                 return false;
             }
         });
-*/
-
-
 
         return binding.getRoot();
     }

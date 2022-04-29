@@ -1,4 +1,4 @@
-package fr.flareden.meetingcar;
+package fr.flareden.meetingcar.ui.home;
 
 import fr.flareden.meetingcar.metier.entity.Annonce;
 

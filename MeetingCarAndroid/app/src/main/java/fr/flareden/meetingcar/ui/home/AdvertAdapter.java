@@ -1,4 +1,4 @@
-package fr.flareden.meetingcar;
+package fr.flareden.meetingcar.ui.home;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+
+import fr.flareden.meetingcar.R;
 
 public class AdvertAdapter extends RecyclerView.Adapter<AdvertAdapter.ViewHolder> implements Filterable {
 
