@@ -123,7 +123,7 @@ public class CommunicationWebservice {
     }
 
     public void disconnect() {
-        // TODO
+        this.token = "";
         CONNECTED = false;
     }
 

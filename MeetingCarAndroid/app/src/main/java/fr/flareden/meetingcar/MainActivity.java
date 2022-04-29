@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 drawer.closeDrawer((int) Gravity.START);
 
             } else {
-                CommunicationWebservice.getINSTANCE().disconnect();
+                Metier.getINSTANCE().disconnect();
                 Button b = findViewById(R.id.buttonLogin);
                 b.setText(R.string.action_sign_in);
             }

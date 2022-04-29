@@ -56,6 +56,11 @@ public class Metier  {
 
     }
 
+    public void disconnect(){
+        this.utilisateur = null;
+        cws.disconnect();
+    }
+
     public Client getUtilisateur() {
         return utilisateur;
     }
