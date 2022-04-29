@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation.xml"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_listAds">
+
+    <fragment
+        android:id="@+id/nav_listAds"
+        android:name="fr.flareden.meetingcar.ui.listannounce.ListAnnounceFragment"
+        android:label="menu_listAds"
+        tools:layout="@layout/fragment_listannounce" />
 
     <fragment
         android:id="@+id/nav_home"

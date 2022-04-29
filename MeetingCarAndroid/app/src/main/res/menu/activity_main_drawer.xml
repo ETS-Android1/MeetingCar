@@ -5,6 +5,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_listAds"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="Acceuil" />
+        <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_baseline_person_24"
             android:title="Profil" />
@@ -25,5 +29,4 @@
             android:icon="@drawable/ic_baseline_history_24"
             android:title="Historique d'achat" />
     </group>
-
 </menu>
