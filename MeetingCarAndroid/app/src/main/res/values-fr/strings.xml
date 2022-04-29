@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MeetingCar</string>
+    <string name="title_activity_login">Connexion</string>
+    <string name="prompt_email">E-mail</string>
+    <string name="prompt_password">Mot de passe</string>
+    <string name="action_sign_in_short">Se connecter</string>
+    <string name="action_sign_in">Se connecter ou s\'inscrire</string>
+    <string name="welcome">Bienvenu !</string>
+    <string name="invalid_email">E-mail non valide</string>
+    <string name="login_failed">Connexion échouée</string>
+    <string name="invalid_password">Le mot de passe doit faire au moins 5 caractères</string>
+    <string name="hello_blank_fragment">Boujour Vide</string>
+    <string name="action_register">S\'inscrire</string>
+    <string name="prompt_required">Requis</string>
+    <string name="prompt_retype_password">Confirmez votre mot de passe</string>
+    <string name="prompt_name">Prénom</string>
+    <string name="prompt_surname">Nom</string>
+    <string name="prompt_phone">Numéro de Téléphone</string>
+    <string name="prompt_birthday">Date de naissance</string>
+    <string name="date_format">jj/mm/aaaa</string>
+    <string name="prompt_address">Adresse</string>
+    <string name="cancel">Annuler</string>
+    <string name="wrong_email_password">Email ou mot de passe erroné</string>
+    <string name="please_enter_email_password">Veuillez renseigner un email et un mot de passe</string>
+    <string name="error_empty">Vide</string>
+    <string name="password_no_match">Les mots de passes ne sont pas identique</string>
+    <string name="email_already_use">Email déjà utilisée</string>
+</resources>

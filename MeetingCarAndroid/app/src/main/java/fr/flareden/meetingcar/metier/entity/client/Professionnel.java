@@ -5,13 +5,13 @@ import java.util.ArrayList;
 public class Professionnel extends Client{
     private boolean abonner;
 
-    public Professionnel(int id, String nom, String prenom, String email, String telephone, String datenaissance, ArrayList<MoyenCommunication> communications, boolean abonner) {
-        super(id, nom, prenom, email, telephone, datenaissance, communications);
+    public Professionnel(int id, String nom, String prenom, String email, String telephone, String datenaissance,String adresse, ArrayList<MoyenCommunication> communications, boolean abonner) {
+        super(id, nom, prenom, email, telephone, datenaissance, adresse,communications);
         this.abonner = abonner;
     }
 
-    public Professionnel(int id, String nom, String prenom, String email, String telephone, String datenaissance, boolean abonner) {
-        super(id, nom, prenom, email, telephone, datenaissance);
+    public Professionnel(int id, String nom, String prenom, String email, String telephone, String datenaissance,String adresse, boolean abonner) {
+        super(id, nom, prenom, email, telephone, datenaissance,adresse);
         this.abonner = abonner;
     }
 
