@@ -1,16 +1,16 @@
-package fr.flareden.meetingcar.ui.listannounce;
+package fr.flareden.meetingcar.ui.profile;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class ListAnnounceViewModel extends ViewModel {
+public class ProfileViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public ListAnnounceViewModel() {
+    public ProfileViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("listAds!");
+        mText.setValue("Profile CLASS");
     }
 
     public LiveData<String> getText() {

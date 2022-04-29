@@ -1,4 +1,4 @@
-package fr.flareden.meetingcar.ui.listannounce;
+package fr.flareden.meetingcar.ui.profile;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,21 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import fr.flareden.meetingcar.databinding.FragmentListannounceBinding;
+import fr.flareden.meetingcar.databinding.FragmentProfileBinding;
 
-public class ListAnnounceFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
-    private FragmentListannounceBinding binding;
+    private FragmentProfileBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        ListAnnounceViewModel galleryViewModel =
-                new ViewModelProvider(this).get(ListAnnounceViewModel.class);
+        ProfileViewModel galleryViewModel =
+                new ViewModelProvider(this).get(ProfileViewModel.class);
 
-        binding = FragmentListannounceBinding.inflate(inflater, container, false);
+        binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textAd;
+        final TextView textView = binding.textHome;
         galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

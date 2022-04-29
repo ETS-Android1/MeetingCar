@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -34,10 +33,7 @@ import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
 public class LoginFragment extends Fragment implements IConnectHandler, IRegisterHandler {
     private FragmentLoginBinding binding;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        LoginViewModel galleryViewModel =
-                new ViewModelProvider(this).get(LoginViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -191,7 +187,7 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
                 tv.setText(Metier.getINSTANCE().getUtilisateur().getNom());
             } else {
                 b.setText(getResources().getString(R.string.action_sign_in));
-                tv.setText("Invité");
+                tv.setText(R.string.guest);
             }
         });
     }

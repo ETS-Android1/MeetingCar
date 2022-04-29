@@ -10,7 +10,7 @@ public class FollowViewModel extends ViewModel {
 
     public FollowViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("FollowText!");
+        mText.setValue("Follow CLASS");
     }
 
     public LiveData<String> getText() {

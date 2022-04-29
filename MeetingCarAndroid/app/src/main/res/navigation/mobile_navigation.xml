@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation.xml"
-    app:startDestination="@+id/nav_listAds">
-
-    <fragment
-        android:id="@+id/nav_listAds"
-        android:name="fr.flareden.meetingcar.ui.listannounce.ListAnnounceFragment"
-        android:label="menu_listAds"
-        tools:layout="@layout/fragment_listannounce" />
+    app:startDestination="@+id/nav_home">
 
     <fragment
         android:id="@+id/nav_home"
         android:name="fr.flareden.meetingcar.ui.home.HomeFragment"
         android:label="menu_home"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="fr.flareden.meetingcar.ui.profile.ProfileFragment"
+        android:label="menu_profile"
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/nav_mail"

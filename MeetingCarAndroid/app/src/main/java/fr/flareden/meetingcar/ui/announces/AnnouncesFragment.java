@@ -24,7 +24,7 @@ public class AnnouncesFragment extends Fragment {
         binding = FragmentAnnouncesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textAnnounces;
+        final TextView textView = binding.textTMP;
         galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

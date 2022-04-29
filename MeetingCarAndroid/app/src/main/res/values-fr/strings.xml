@@ -27,4 +27,16 @@
     <string name="password_no_match">Les mots de passes ne sont pas identique</string>
     <string name="email_already_use">Email déjà utilisée</string>
     <string name="disconnect">Déconnexion</string>
+    <string name="desc_img">Image</string>
+    <string name="description">Description</string>
+    <string name="contact_seller">Contacter le vendeur</string>
+    <string name="follow">Suivre</string>
+    <string name="guest">Invité</string>
+    <string name="desc_header">En-tête de navigation</string>
+    <string name="home">Acceuil</string>
+    <string name="profile">Profil</string>
+    <string name="tracked_announces">Annonces suivies</string>
+    <string name="my_announces">Mes annonces</string>
+    <string name="purchase_history">Historique d\'achat</string>
+    <string name="settings">Options</string>
 </resources>

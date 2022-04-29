@@ -5,29 +5,29 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_listAds"
-            android:icon="@drawable/ic_baseline_home_24"
-            android:title="Acceuil" />
-        <item
             android:id="@+id/nav_home"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="@string/home" />
+        <item
+            android:id="@+id/nav_profile"
             android:icon="@drawable/ic_baseline_person_24"
-            android:title="Profil" />
+            android:title="@string/profile" />
         <item
             android:id="@+id/nav_mail"
             android:icon="@drawable/ic_baseline_email_24"
-            android:title="Courriel" />
+            android:title="@string/prompt_email" />
         <item
             android:id="@+id/nav_follow"
             android:icon="@drawable/ic_baseline_push_pin_24"
-            android:title="Suivi" />
+            android:title="@string/tracked_announces" />
         <item
             android:id="@+id/nav_announces"
             android:icon="@drawable/ic_baseline_announcement_24"
-            android:title="Mes annonces" />
+            android:title="@string/my_announces" />
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_baseline_history_24"
-            android:title="Historique d'achat" />
+            android:title="@string/purchase_history" />
     </group>
 
 </menu>

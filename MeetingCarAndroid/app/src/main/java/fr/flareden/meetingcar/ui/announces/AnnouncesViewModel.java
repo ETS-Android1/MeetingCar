@@ -10,7 +10,7 @@ public class AnnouncesViewModel extends ViewModel {
 
     public AnnouncesViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("annoucesText!");
+        mText.setValue("annouces CLASS");
     }
 
     public LiveData<String> getText() {
