@@ -39,4 +39,6 @@
     <string name="my_announces">My announces</string>
     <string name="purchase_history">Purchase history</string>
     <string name="settings">Settings</string>
+    <string name="pro">Professional</string>
+    <string name="pub_announces">Published announces</string>
 </resources>

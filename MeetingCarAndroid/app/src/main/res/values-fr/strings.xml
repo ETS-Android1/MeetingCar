@@ -39,4 +39,6 @@
     <string name="my_announces">Mes annonces</string>
     <string name="purchase_history">Historique d\'achat</string>
     <string name="settings">Options</string>
+    <string name="pro">Professionnel</string>
+    <string name="pub_announces">Annonces publiées</string>
 </resources>
