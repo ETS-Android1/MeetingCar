@@ -1,37 +1,20 @@
 package fr.flareden.meetingcar.ui.history;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import fr.flareden.meetingcar.ui.home.AdvertViewModel;
+import fr.flareden.meetingcar.ui.home.HomeFragment;
 
-import fr.flareden.meetingcar.databinding.FragmentHistoryBinding;
-
-public class HistoryFragment extends Fragment {
-
-    private FragmentHistoryBinding binding;
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        HistoryViewModel galleryViewModel =
-                new ViewModelProvider(this).get(HistoryViewModel.class);
-
-        binding = FragmentHistoryBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textHistory;
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
-    }
+public class HistoryFragment extends HomeFragment {
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    protected ArrayList<AdvertViewModel> queryData() {
+
+        // Change DATA
+        ArrayList<AdvertViewModel> data = new ArrayList<>();
+        data.add(new AdvertViewModel(0, "G", "A2", "A3", "A4", AdvertViewModel.TYPE.RENT));
+
+        return data;
+
     }
 }

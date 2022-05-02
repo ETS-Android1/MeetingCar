@@ -16,7 +16,7 @@ public class AdvertViewModel {
     // private images?
 
     // CONSTRUCTOR
-    AdvertViewModel(int id, String title, String desc, String loc, String price, TYPE type) {
+    public AdvertViewModel(int id, String title, String desc, String loc, String price, TYPE type) {
         this.id = id;
         this.title = title;
         this.desc = desc;
