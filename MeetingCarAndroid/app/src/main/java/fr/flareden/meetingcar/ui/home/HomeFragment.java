@@ -10,7 +10,6 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -77,6 +76,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        // FAB GONE OR VISIBLE
+        binding.homeFabAdd.setOnClickListener((View view) -> {
+            System.out.println("Add!");
+            // TODO
+        });
+        initFab(binding);
+
         return binding.getRoot();
     }
 
@@ -86,7 +92,7 @@ public class HomeFragment extends Fragment {
         binding = null;
     }
 
-    protected ArrayList<AdvertViewModel> queryData(){
+    protected ArrayList<AdvertViewModel> queryData() {
 
         // FILL DATA (MAKE IT ON SQL)
         ArrayList<AdvertViewModel> data = new ArrayList<>();
@@ -96,5 +102,8 @@ public class HomeFragment extends Fragment {
         data.add(new AdvertViewModel(3, "D1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
 
         return data;
+    }
+
+    protected void initFab(FragmentHomeBinding binding) {
     }
 }

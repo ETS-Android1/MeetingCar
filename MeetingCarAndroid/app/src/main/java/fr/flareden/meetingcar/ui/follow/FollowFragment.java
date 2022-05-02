@@ -1,7 +1,10 @@
 package fr.flareden.meetingcar.ui.follow;
 
+import android.view.View;
+
 import java.util.ArrayList;
 
+import fr.flareden.meetingcar.databinding.FragmentHomeBinding;
 import fr.flareden.meetingcar.ui.home.AdvertViewModel;
 import fr.flareden.meetingcar.ui.home.HomeFragment;
 
@@ -16,5 +19,10 @@ public class FollowFragment extends HomeFragment {
 
         return data;
 
+    }
+
+    @Override
+    protected void initFab(FragmentHomeBinding binding) {
+        binding.homeFabAdd.setVisibility(View.GONE);
     }
 }

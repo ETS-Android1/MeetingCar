@@ -22,6 +22,8 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // TODO :
+
         // Load Data Client
         // TextView ...
         // Hints ...
