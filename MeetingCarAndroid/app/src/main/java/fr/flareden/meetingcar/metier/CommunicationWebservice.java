@@ -1,11 +1,16 @@
 package fr.flareden.meetingcar.metier;
 
 
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,6 +22,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
+import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
 import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
 
 public class CommunicationWebservice {
@@ -152,6 +158,26 @@ public class CommunicationWebservice {
                 }
                 CONNECTED = reponse;
                 callback.askIsLogin(reponse);
+            }).start();
+        }
+    }
+
+    public void getImage(int id, IImageReceivingHandler callback){
+        if(callback != null && id >= 0){
+            new Thread(() -> {
+                Drawable image = null;
+                try {
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "image/" + id).openConnection();
+                    connection.setRequestMethod("GET");
+                    try (InputStream in = connection.getInputStream()) {
+                       image =  Drawable.createFromStream(in, null);
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                callback.receiveImage(image);
             }).start();
         }
     }

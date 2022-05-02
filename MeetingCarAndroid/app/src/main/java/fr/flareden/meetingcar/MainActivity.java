@@ -1,10 +1,12 @@
 package fr.flareden.meetingcar;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -18,8 +20,9 @@ import com.google.android.material.navigation.NavigationView;
 import fr.flareden.meetingcar.databinding.ActivityMainBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
+import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IImageReceivingHandler {
     // NAVIGATION DRAWER
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             if (!CommunicationWebservice.CONNECTED) {
                 navController.popBackStack();
                 navController.navigate(R.id.nav_login);
-                drawer.closeDrawer(Gravity.START);
+                drawer.closeDrawer(Gravity.LEFT);
 
             } else {
                 Metier.getINSTANCE().disconnect();
@@ -58,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
                 b.setText(R.string.action_sign_in);
             }
         });
+
+        CommunicationWebservice.getINSTANCE().getImage(1, this);
     }
 
     @Override
@@ -71,5 +76,15 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void receiveImage(Drawable d) {
+        runOnUiThread(()->{
+            if(d != null) {
+                ImageView iv = findViewById(R.id.profile_image);
+                iv.setImageDrawable(d);
+            }
+        });
     }
 }
