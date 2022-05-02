@@ -29,15 +29,8 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-
-        // FILL DATA (MAKE IT ON SQL)
-        ArrayList<AdvertViewModel> data = new ArrayList<>();
-        data.add(new AdvertViewModel(0, "A1", "A2", "A3", "A4", AdvertViewModel.TYPE.RENT));
-        data.add(new AdvertViewModel(1, "B1", "B2", "B3", "B4", AdvertViewModel.TYPE.SELL));
-        data.add(new AdvertViewModel(2, "C1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
-        data.add(new AdvertViewModel(3, "D1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
+        ArrayList<AdvertViewModel> data = queryData();
 
         // RECYCLER VIEW INIT
         recycler = binding.rvAnnounce;
@@ -91,5 +84,17 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    protected ArrayList<AdvertViewModel> queryData(){
+
+        // FILL DATA (MAKE IT ON SQL)
+        ArrayList<AdvertViewModel> data = new ArrayList<>();
+        data.add(new AdvertViewModel(0, "A1", "A2", "A3", "A4", AdvertViewModel.TYPE.RENT));
+        data.add(new AdvertViewModel(1, "B1", "B2", "B3", "B4", AdvertViewModel.TYPE.SELL));
+        data.add(new AdvertViewModel(2, "C1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
+        data.add(new AdvertViewModel(3, "D1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
+
+        return data;
     }
 }

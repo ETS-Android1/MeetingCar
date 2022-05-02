@@ -8,43 +8,43 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="fr.flareden.meetingcar.ui.home.HomeFragment"
-        android:label="menu_home"
+        android:label="@string/home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_profile"
         android:name="fr.flareden.meetingcar.ui.profile.ProfileFragment"
-        android:label="menu_profile"
+        android:label="@string/profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/nav_mail"
         android:name="fr.flareden.meetingcar.ui.mail.MailFragment"
-        android:label="menu_mail"
+        android:label="@string/prompt_email"
         tools:layout="@layout/fragment_mail" />
 
     <fragment
         android:id="@+id/nav_follow"
         android:name="fr.flareden.meetingcar.ui.follow.FollowFragment"
-        android:label="menu_follow"
-        tools:layout="@layout/fragment_follow" />
+        android:label="@string/follow"
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_announces"
-        android:name="fr.flareden.meetingcar.ui.announces.AnnouncesFragment"
-        android:label="menu_announces"
-        tools:layout="@layout/fragment_announces" />
+        android:name="fr.flareden.meetingcar.ui.myannounces.AnnouncesFragment"
+        android:label="@string/my_announces"
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_history"
         android:name="fr.flareden.meetingcar.ui.history.HistoryFragment"
-        android:label="menu_history"
-        tools:layout="@layout/fragment_history" />
+        android:label="@string/purchase_history"
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/nav_login"
         android:name="fr.flareden.meetingcar.ui.login.LoginFragment"
-        android:label="menu_login"
+        android:label="@string/title_activity_login"
         tools:layout="@layout/fragment_login" />
 
 </navigation>

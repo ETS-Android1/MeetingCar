@@ -35,7 +35,7 @@
     <string name="desc_header">Navigation header</string>
     <string name="home">Home</string>
     <string name="profile">Profile</string>
-    <string name="tracked_announces">Tracked Announces</string>
+    <string name="tracked_announces">Tracked announces</string>
     <string name="my_announces">My announces</string>
     <string name="purchase_history">Purchase history</string>
     <string name="settings">Settings</string>
