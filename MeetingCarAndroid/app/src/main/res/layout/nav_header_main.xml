@@ -18,7 +18,7 @@
         android:layout_height="80dp"
         app:cardCornerRadius="40dp"
         android:layout_gravity="center"
-        app:cardBackgroundColor="@color/white">
+        app:cardBackgroundColor="@color/tranparent">
 
             <ImageView
                 android:id="@+id/profile_image"
@@ -27,7 +27,7 @@
                 android:contentDescription="@string/desc_header"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_launcher_background" />
+                android:src="@drawable/ic_baseline_person_profile" />
 
         </androidx.cardview.widget.CardView>
 

@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements IImageReceivingHa
             }
         });
 
-        CommunicationWebservice.getINSTANCE().getImage(1, this);
+        // CommunicationWebservice.getINSTANCE().getImage(1, this);
     }
 
     @Override

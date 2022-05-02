@@ -26,7 +26,7 @@
     <fragment
         android:id="@+id/nav_follow"
         android:name="fr.flareden.meetingcar.ui.follow.FollowFragment"
-        android:label="@string/follow"
+        android:label="@string/tracked_announces"
         tools:layout="@layout/fragment_home" />
 
     <fragment
