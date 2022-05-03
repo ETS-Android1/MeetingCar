@@ -76,11 +76,12 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // FAB GONE OR VISIBLE
+        // FAB ADD ANNOUNCE
         binding.homeFabAdd.setOnClickListener((View view) -> {
             System.out.println("Add!");
             // TODO
         });
+
         initFab(binding);
 
         return binding.getRoot();

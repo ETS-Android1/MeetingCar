@@ -15,6 +15,7 @@ import fr.flareden.meetingcar.databinding.FragmentProfileBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.client.Client;
+import fr.flareden.meetingcar.metier.entity.client.Professionnel;
 import fr.flareden.meetingcar.metier.listener.IClientLoadingHandler;
 
 public class ProfileFragment extends Fragment implements IClientLoadingHandler {
@@ -34,8 +35,11 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
         binding.profileFabCheck.setOnClickListener((View view) -> checkEditProfile());
         binding.profileFabCancel.setOnClickListener((View view) -> cancelEditProfile());
 
+        // ANNOUNCES LISTENER
+        // TODO : binding.profileBtnAnnounces.setOnClickListener((View view) -> func());
+
         // CURRENT USER && TARGET USER
-        int userID = savedInstanceState.getInt("userID", -1);
+        int userID = (savedInstanceState == null ? -1 : savedInstanceState.getInt("userID", -1));
         if (userID == -1) {
             if (Metier.getINSTANCE().getUtilisateur() != null) {
                 onClientLoad(Metier.getINSTANCE().getUtilisateur(), true);
@@ -77,6 +81,29 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
             binding.profileLayoutAddress.setVisibility(View.VISIBLE);
             binding.profileFabCancel.setVisibility(View.VISIBLE);
             binding.profileFabCheck.setVisibility(View.VISIBLE);
+
+            // HINTS
+            Client user = Metier.getINSTANCE().getUtilisateur();
+            if (user.getNom().length() > 0 && !user.getNom().equalsIgnoreCase("null")) {
+                binding.profileEditName.setHint(user.getNom());
+            }
+            if (user.getPrenom().length() > 0 && !user.getPrenom().equalsIgnoreCase("null")) {
+                binding.profileEditSurname.setHint(user.getPrenom());
+            }
+            if (user.getEmail().length() > 0 && !user.getEmail().equalsIgnoreCase("null")) {
+                binding.profileEditEmail.setHint(user.getEmail());
+            }
+            if (user.getTelephone().length() > 0 && !user.getTelephone().equalsIgnoreCase("null")) {
+                binding.profileEditPhone.setHint(user.getTelephone());
+            }
+            if (user.getDatenaissance().length() > 0 && !user.getDatenaissance().equalsIgnoreCase("null")) {
+                binding.profileEditBirth.setHint(user.getDatenaissance());
+            } else {
+                binding.profileEditBirth.setHint(R.string.date_format);
+            }
+            if (user.getAdresse().length() > 0 && !user.getAdresse().equalsIgnoreCase("null")) {
+                binding.profileEditAddress.setHint(user.getAdresse());
+            }
 
             // LISTENER IMG
             binding.profileImage.setOnClickListener((View view) -> {
@@ -132,16 +159,33 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
             if (birthText.length() > 0) {
                 Metier.getINSTANCE().getUtilisateur().setDatenaissance(birthText);
             }
+
+            // TODO : IMAGE LOAD!
+
+            onClientLoad(Metier.getINSTANCE().getUtilisateur(), true);
             cancelEditProfile();
+            CommunicationWebservice.getINSTANCE().updateClient(Metier.getINSTANCE().getUtilisateur(), null, null);
         }
     }
 
     @Override
     public void onClientLoad(Client c, boolean self) {
         getActivity().runOnUiThread(() -> {
-            binding.profileTvName.setText(c.getNom() + " " + c.getPrenom());
+            if (c.getPrenom() != null) {
+                binding.profileTvName.setText(c.getNom() + " " + c.getPrenom());
+            } else {
+                binding.profileTvName.setText(c.getNom());
+            }
             binding.profileTvEmail.setText(c.getEmail());
-            binding.profileTvPhone.setText(c.getTelephone());
+            if (c.getTelephone().equalsIgnoreCase("null")) {
+                binding.profileTvPhone.setText("");
+            } else {
+                binding.profileTvPhone.setText(c.getTelephone());
+
+            }
+            if (c.getClass() == Professionnel.class) {
+                binding.profileTvPro.setVisibility(View.VISIBLE);
+            }
             if (self) {
                 binding.profileFabEdit.setVisibility(View.VISIBLE);
                 isSelf = true;
