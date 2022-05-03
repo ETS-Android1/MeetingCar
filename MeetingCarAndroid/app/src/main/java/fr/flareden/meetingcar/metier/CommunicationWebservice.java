@@ -37,6 +37,7 @@ import javax.net.ssl.HttpsURLConnection;
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
+import fr.flareden.meetingcar.metier.listener.IClientLoadingHandler;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
 import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
 import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
@@ -238,6 +239,50 @@ public class CommunicationWebservice {
             }
             Metier.getINSTANCE().setUtilisateur(c);
         }).start();
+    }
+
+    public void getClient(int id, IClientLoadingHandler callback){
+        new Thread(() -> {
+            IRegisterHandler.State state = IRegisterHandler.State.SERVER_ERROR;
+            Client retour = null;
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "client/" + id).openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("GET");
+
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line = "";
+                    while ((line = in.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    JSONObject json = new JSONObject(sb.toString().trim());
+                    String error = json.optString("error", null) ;
+                    if(error == null){
+                        retour = Client.fromJsonObject(json);
+                        int idImage = json.getInt("photo");
+                        //ASK IMAGE
+                        if (idImage >= 0) {
+                            HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "image/" + idImage).openConnection();
+                            conn.setConnectTimeout(2500);
+                            conn.setRequestMethod("GET");
+                            try (InputStream in2 = conn.getInputStream()) {
+                                retour.setImage(Drawable.createFromStream(in2, null));
+                            }
+                        }
+                    }
+                }
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            callback.onClientLoad(retour, false);
+        });
     }
 
     // --- FIN CLIENT ---
