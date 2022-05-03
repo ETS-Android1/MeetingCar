@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
             if (c != null) {
                 if (c.getImage() != null) {
                     ImageView iv = findViewById(R.id.profile_image);
-                    iv.setImageDrawable(c.getImage());
+                    iv.setImageDrawable(c.getImage().getDrawable());
                 }
 
                 // ADD USER OPTIONS

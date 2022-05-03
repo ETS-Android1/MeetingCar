@@ -13,6 +13,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import fr.flareden.meetingcar.metier.entity.Image;
+
 public class Client {
     private int id;
     private String nom;
@@ -22,7 +24,7 @@ public class Client {
     private String datenaissance;
     private ArrayList<MoyenCommunication> communications;
     private String adresse;
-    private Drawable image;
+    private Image image;
 
     public Client(int id, String nom, String prenom, String email, String telephone, String datenaissance, String adresse, ArrayList<MoyenCommunication> communications) {
         this.id = id;
@@ -204,11 +206,11 @@ public class Client {
         return result;
     }
 
-    public void setImage(Drawable image) {
+    public void setImage(Image image) {
         this.image = image;
     }
 
-    public Drawable getImage() {
-        return image;
+    public Image getImage() {
+        return this.image;
     }
 }

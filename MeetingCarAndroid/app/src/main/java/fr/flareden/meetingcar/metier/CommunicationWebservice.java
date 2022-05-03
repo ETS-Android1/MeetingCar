@@ -5,10 +5,11 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 import android.util.Base64;
+
+import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +36,9 @@ import java.util.ArrayList;
 import javax.net.ssl.HttpsURLConnection;
 
 import fr.flareden.meetingcar.metier.entity.Annonce;
+import fr.flareden.meetingcar.metier.entity.Image;
 import fr.flareden.meetingcar.metier.entity.client.Client;
+import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
 import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
 import fr.flareden.meetingcar.metier.listener.IClientLoadingHandler;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
@@ -134,14 +137,15 @@ public class CommunicationWebservice {
                         if (error == null) {
                             token = json.getString("access_token");
                             retour = Client.fromJsonObject(json.getJSONObject("user"));
-                            int idImage = json.getJSONObject("user").getInt("photo");
+
+                            int idImage = json.getJSONObject("user").optInt("photo", -1);
                             //ASK IMAGE
                             if (idImage >= 0) {
                                 HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "image/" + idImage).openConnection();
                                 conn.setConnectTimeout(2500);
                                 conn.setRequestMethod("GET");
                                 try (InputStream in2 = conn.getInputStream()) {
-                                    retour.setImage(Drawable.createFromStream(in2, null));
+                                    retour.setImage(new Image(idImage,Drawable.createFromStream(in2, null)));
                                 }
                             }
 
@@ -227,7 +231,8 @@ public class CommunicationWebservice {
                     conn.setConnectTimeout(2500);
                     conn.setRequestMethod("GET");
                     try (InputStream in = conn.getInputStream()) {
-                        c.setImage(Drawable.createFromStream(in, null));
+
+                        c.setImage(new Image(imageID,Drawable.createFromStream(in, null)));
                     }
                 }
             } catch (MalformedURLException e) {
@@ -243,7 +248,6 @@ public class CommunicationWebservice {
 
     public void getClient(int id, IClientLoadingHandler callback){
         new Thread(() -> {
-            IRegisterHandler.State state = IRegisterHandler.State.SERVER_ERROR;
             Client retour = null;
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "client/" + id).openConnection();
@@ -267,7 +271,7 @@ public class CommunicationWebservice {
                             conn.setConnectTimeout(2500);
                             conn.setRequestMethod("GET");
                             try (InputStream in2 = conn.getInputStream()) {
-                                retour.setImage(Drawable.createFromStream(in2, null));
+                                retour.setImage(new Image(idImage, Drawable.createFromStream(in2, null)));
                             }
                         }
                     }
@@ -292,13 +296,13 @@ public class CommunicationWebservice {
     public void getImage(int id, IImageReceivingHandler callback) {
         if (callback != null && id >= 0) {
             new Thread(() -> {
-                Drawable image = null;
+                Image image = null;
                 try {
                     HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "image/" + id).openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestMethod("GET");
                     try (InputStream in = connection.getInputStream()) {
-                        image = Drawable.createFromStream(in, null);
+                        image = new Image(id, Drawable.createFromStream(in, null));
                     }
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -390,6 +394,101 @@ public class CommunicationWebservice {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public void updateAnnonce(Annonce a, ArrayList<Uri> imagesURI, ContentResolver resolver){
+        new Thread(() -> {
+            try {
+                JSONArray array = new JSONArray();
+                for(int i = 0, max = imagesURI.size(); i < max; i++){
+                    array.put(uploadImage(imagesURI.get(i), resolver));
+                }
+                ArrayList<Image> photos = (ArrayList<Image>) a.getPhotos().clone();
+                for(Image image : photos){
+                    if(image.isToDelete()){
+                        new Thread(() -> {
+                            try {
+                                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "removeimage/" + image.getId()).openConnection();
+                                connection.setConnectTimeout(2500);
+                                connection.setRequestMethod("GET");
+                                connection.setRequestProperty("authorization", token);
+                                connection.connect();
+                            } catch (ProtocolException e) {
+                                e.printStackTrace();
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
+                        a.getPhotos().remove(image);
+                    }
+                }
+
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "inscription").openConnection();
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("POST");
+
+                JSONObject send = a.toJsonObject();
+                send.put("images_ids", (Object) array);
+
+                try (OutputStream out = connection.getOutputStream()) {
+                    out.write(send.toString().getBytes(StandardCharsets.UTF_8));
+                    out.flush();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public void getAnnonce(int idAnnonce,@NonNull IAnnonceLoaderHandler callback){
+        if (idAnnonce >= 0) {
+            new Thread(() -> {
+                Annonce retour = null;
+                try {
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/get/" + idAnnonce).openConnection();
+                    connection.setConnectTimeout(2500);
+                    connection.setRequestMethod("GET");
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while ((line = in.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        JSONObject json = new JSONObject(sb.toString().trim());
+                        String error = json.optString("error", null) ;
+                        if(error == null){
+                            //TODO
+                            /*retour = Annonce.fromJsonObject(json);
+
+                            int idImage = json.getInt("photo");
+                            //ASK IMAGE
+                            if (idImage >= 0) {
+                                HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "image/" + idImage).openConnection();
+                                conn.setConnectTimeout(2500);
+                                conn.setRequestMethod("GET");
+                                try (InputStream in2 = conn.getInputStream()) {
+                                    retour.setImage(new Image(idImage, Drawable.createFromStream(in2, null)));
+                                }
+                            }*/
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                callback.onAnnonceLoad(retour);
+            }).start();
+        }
     }
 
     // --- FIN ARTICLES ---

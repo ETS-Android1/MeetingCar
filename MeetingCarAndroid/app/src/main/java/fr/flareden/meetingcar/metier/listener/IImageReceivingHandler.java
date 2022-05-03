@@ -1,7 +1,8 @@
 package fr.flareden.meetingcar.metier.listener;
 
-import android.graphics.drawable.Drawable;
+
+import fr.flareden.meetingcar.metier.entity.Image;
 
 public interface IImageReceivingHandler {
-    public void receiveImage(Drawable d);
+    public void receiveImage(Image d);
 }

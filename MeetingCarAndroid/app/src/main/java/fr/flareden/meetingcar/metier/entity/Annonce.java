@@ -16,7 +16,7 @@ public class Annonce {
     private String desc;
     private float prix;
     private Client vendeur;
-    private ArrayList<Drawable> photos;
+    private ArrayList<Image> photos;
     private boolean disponible;
     private Client acheteur;
     private ArrayList<Visite> visites;
@@ -24,7 +24,7 @@ public class Annonce {
     private boolean renforcer;
 
     // CONSTRUCTOR
-    public Annonce(int id, String title, String desc, float prix, Client vendeur, ArrayList<Drawable> photos, boolean disponible, Client acheteur, ArrayList<Visite> visites, boolean location, boolean renforcer) {
+    public Annonce(int id, String title, String desc, float prix, Client vendeur, ArrayList<Image> photos, boolean disponible, Client acheteur, ArrayList<Visite> visites, boolean location, boolean renforcer) {
         this.id = id;
         this.title = title;
         this.desc = desc;
@@ -92,11 +92,11 @@ public class Annonce {
         this.vendeur = vendeur;
     }
 
-    public ArrayList<Drawable> getPhotos() {
+    public ArrayList<Image> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(ArrayList<Drawable> photos) {
+    public void setPhotos(ArrayList<Image> photos) {
         this.photos = photos;
     }
 
