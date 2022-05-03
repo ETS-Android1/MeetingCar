@@ -11,23 +11,28 @@
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_baseline_person_24"
-            android:title="@string/profile" />
+            android:title="@string/profile"
+            android:visible="false" />
         <item
             android:id="@+id/nav_mail"
             android:icon="@drawable/ic_baseline_email_24"
-            android:title="@string/prompt_email" />
+            android:title="@string/prompt_email"
+            android:visible="false" />
         <item
             android:id="@+id/nav_follow"
             android:icon="@drawable/ic_baseline_push_pin_24"
-            android:title="@string/tracked_announces" />
+            android:title="@string/tracked_announces"
+            android:visible="false" />
         <item
             android:id="@+id/nav_announces"
             android:icon="@drawable/ic_baseline_announcement_24"
-            android:title="@string/my_announces" />
+            android:title="@string/my_announces"
+            android:visible="false" />
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_baseline_history_24"
-            android:title="@string/purchase_history" />
+            android:title="@string/purchase_history"
+            android:visible="false" />
     </group>
 
 </menu>

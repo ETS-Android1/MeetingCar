@@ -1,6 +1,5 @@
 package fr.flareden.meetingcar;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -22,7 +21,6 @@ import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
-import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
 
 public class MainActivity extends AppCompatActivity implements IClientChangeHandler {
     // NAVIGATION DRAWER
@@ -56,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
                 navController.popBackStack();
                 navController.navigate(R.id.nav_login);
                 drawer.closeDrawer(Gravity.LEFT);
-
             } else {
                 Metier.getINSTANCE().disconnect();
                 Button b = findViewById(R.id.buttonLogin);
@@ -81,11 +78,31 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
 
     @Override
     public void onClientChange(Client c) {
-        runOnUiThread(()-> {
-            if (c.getImage() != null) {
+        runOnUiThread(() -> {
+            if (c != null) {
+                if (c.getImage() != null) {
+                    ImageView iv = findViewById(R.id.profile_image);
+                    iv.setImageDrawable(c.getImage());
+                }
+
+                // ADD USER OPTIONS
+                addUserOptions(true);
+            } else {
+                // SET PLACEHOLDER IMG
                 ImageView iv = findViewById(R.id.profile_image);
-                iv.setImageDrawable(c.getImage());
+                iv.setImageResource(R.drawable.ic_baseline_person_profile);
+
+                // HIDE USER OPTIONS
+                addUserOptions(false);
             }
         });
+    }
+
+    public void addUserOptions(boolean visible) {
+        binding.navView.getMenu().findItem(R.id.nav_profile).setVisible(visible);
+        binding.navView.getMenu().findItem(R.id.nav_mail).setVisible(visible);
+        binding.navView.getMenu().findItem(R.id.nav_follow).setVisible(visible);
+        binding.navView.getMenu().findItem(R.id.nav_announces).setVisible(visible);
+        binding.navView.getMenu().findItem(R.id.nav_history).setVisible(visible);
     }
 }
