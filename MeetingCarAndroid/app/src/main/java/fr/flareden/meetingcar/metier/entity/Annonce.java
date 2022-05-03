@@ -47,9 +47,11 @@ public class Annonce {
             acheteur = new Client(idAcheteur, json.getString("acheteur_nom"), json.optString("acheteur_prenom", ""), new Image(json.optInt("acheteur_photo", -1)));
         }
         String photosID = json.optString("images_id", "").trim();
+        if(photosID.equalsIgnoreCase("null")){
+            photosID = "";
+        }
         ArrayList<Image> photos = new ArrayList<>();
-
-        if(photosID.length() > 0){
+        if( photosID.length() > 0 ){
             String[] photoSplit = photosID.split(",");
             for(String id : photoSplit){
                 photos.add(new Image(Integer.parseInt(id)));
