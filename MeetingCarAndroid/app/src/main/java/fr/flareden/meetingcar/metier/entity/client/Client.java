@@ -107,6 +107,14 @@ public class Client {
         this.telephone = telephone;
     }
 
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
     public String getDatenaissance() {
         return datenaissance;
     }

@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
+        // LOAD NAVIGATION
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_profile, R.id.nav_mail, R.id.nav_follow, R.id.nav_announces, R.id.nav_history, R.id.nav_login)
                 .setOpenableLayout(drawer)
@@ -56,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
                 drawer.closeDrawer(Gravity.LEFT);
             } else {
                 Metier.getINSTANCE().disconnect();
-                Button b = findViewById(R.id.buttonLogin);
-                b.setText(R.string.action_sign_in);
             }
         });
         Metier.getINSTANCE().addOnClientChange(this);
@@ -85,15 +85,29 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
                     iv.setImageDrawable(c.getImage().getDrawable());
                 }
 
+                // SET TEXT USER
+                ((TextView) findViewById(R.id.tv_username)).setText(c.getNom() + (c.getPrenom().length() > 0 ? " " + c.getPrenom() : ""));
+
                 // ADD USER OPTIONS
                 addUserOptions(true);
+
+                // SET BUTTON LOGIN
+                Button b = findViewById(R.id.buttonLogin);
+                b.setText(R.string.disconnect);
             } else {
                 // SET PLACEHOLDER IMG
                 ImageView iv = findViewById(R.id.profile_image);
                 iv.setImageResource(R.drawable.ic_baseline_person_profile);
 
+                // SET TEXT USER
+                ((TextView) findViewById(R.id.tv_username)).setText(getResources().getString(R.string.guest));
+
                 // HIDE USER OPTIONS
                 addUserOptions(false);
+
+                // SET BUTTON LOGIN
+                Button b = findViewById(R.id.buttonLogin);
+                b.setText(R.string.action_sign_in);
             }
         });
     }
