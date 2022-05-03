@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel;
 
 public class MailViewModel extends ViewModel {
 
+    //
+
     private final MutableLiveData<String> mText;
 
     public MailViewModel() {
