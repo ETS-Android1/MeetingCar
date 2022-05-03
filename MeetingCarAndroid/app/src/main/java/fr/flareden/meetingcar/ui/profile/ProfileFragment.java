@@ -39,7 +39,8 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
         // TODO : binding.profileBtnAnnounces.setOnClickListener((View view) -> func());
 
         // CURRENT USER && TARGET USER
-        int userID = (savedInstanceState == null ? -1 : savedInstanceState.getInt("userID", -1));
+        Bundle bundle = this.getArguments();
+        int userID = (bundle== null ? -1 : bundle.getInt("userID", -1));
         if (userID == -1) {
             if (Metier.getINSTANCE().getUtilisateur() != null) {
                 onClientLoad(Metier.getINSTANCE().getUtilisateur(), true);
