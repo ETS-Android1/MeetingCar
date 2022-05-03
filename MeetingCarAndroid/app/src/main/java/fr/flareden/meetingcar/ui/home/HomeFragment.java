@@ -10,12 +10,18 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import fr.flareden.meetingcar.R;
 import fr.flareden.meetingcar.databinding.FragmentHomeBinding;
+import fr.flareden.meetingcar.metier.CommunicationWebservice;
+import fr.flareden.meetingcar.metier.entity.Annonce;
+import fr.flareden.meetingcar.metier.listener.IListAnnonceLoaderHandler;
 
 public class HomeFragment extends Fragment {
 
@@ -23,13 +29,19 @@ public class HomeFragment extends Fragment {
 
     // RECYCLER VIEW
     private RecyclerView recycler;
-    private AdvertAdapter adapter;
+    protected AdvertAdapter adapter;
     private SearchView search;
+
+    protected ArrayList<AdvertViewModel> data = new ArrayList<>();;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        ArrayList<AdvertViewModel> data = queryData();
+        if(savedInstanceState != null){
+            queryData(savedInstanceState.getInt("idClient", -1));
+        } else {
+            queryData(-1);
+        }
 
         // RECYCLER VIEW INIT
         recycler = binding.rvAnnounce;
@@ -44,7 +56,7 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
-
+        Fragment self = this;
         // LISTENER RECYCLER
         recycler.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
             @Override
@@ -54,7 +66,12 @@ public class HomeFragment extends Fragment {
                 if (child != null && touch) {
                     int pos = rv.getChildAdapterPosition(child);
                     AdvertViewModel avm = data.get(pos);
-                    System.out.println(avm.getId());
+
+                    Bundle b = new Bundle();
+                    b.putInt("idAnnonce", avm.getId());
+                    NavController navController = NavHostFragment.findNavController(self);
+                    navController.popBackStack();
+                    navController.navigate(R.id.nav_annonce, b);
                     return true;
                 }
                 return false;
@@ -78,8 +95,9 @@ public class HomeFragment extends Fragment {
 
         // FAB ADD ANNOUNCE
         binding.homeFabAdd.setOnClickListener((View view) -> {
-            System.out.println("Add!");
-            // TODO
+            NavController navController = NavHostFragment.findNavController(this);
+            navController.popBackStack();
+            navController.navigate(R.id.nav_create_announce);
         });
 
         initFab(binding);
@@ -93,16 +111,20 @@ public class HomeFragment extends Fragment {
         binding = null;
     }
 
-    protected ArrayList<AdvertViewModel> queryData() {
-
-        // FILL DATA (MAKE IT ON SQL)
-        ArrayList<AdvertViewModel> data = new ArrayList<>();
-        data.add(new AdvertViewModel(0, "A1", "A2", "A3", "A4", AdvertViewModel.TYPE.RENT));
-        data.add(new AdvertViewModel(1, "B1", "B2", "B3", "B4", AdvertViewModel.TYPE.SELL));
-        data.add(new AdvertViewModel(2, "C1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
-        data.add(new AdvertViewModel(3, "D1", "C2", "C3", "C4", AdvertViewModel.TYPE.RENT));
-
-        return data;
+    protected void queryData(int idClient) {
+        CommunicationWebservice.getINSTANCE().getAnnonceListe(0, liste -> {
+            for(Annonce a : liste){
+                this.data.add(new AdvertViewModel(a.getId(),
+                        a.getTitle(),
+                        a.getDesc(),
+                        a.getVendeur().getAdresse(),
+                        ""+a.getPrix(),
+                        (a.isLocation() ? AdvertViewModel.TYPE.RENT : AdvertViewModel.TYPE.SELL) ));
+            }
+            getActivity().runOnUiThread(() -> {
+                this.adapter.notifyDataSetChanged();
+            });
+        });
     }
 
     protected void initFab(FragmentHomeBinding binding) {

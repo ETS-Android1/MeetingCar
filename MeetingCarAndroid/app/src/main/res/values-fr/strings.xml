@@ -42,4 +42,10 @@
     <string name="pro">Professionnel</string>
     <string name="pub_announces">Annonces publiées</string>
     <string name="profile_picture">Image de profile</string>
+    <string name="create_announce">Créer une annonce</string>
+    <string name="create">Créer</string>
+    <string name="title">titre</string>
+    <string name="price">Prix</string>
+    <string name="rental">Location</string>
+    <string name="announce">Annonce</string>
 </resources>

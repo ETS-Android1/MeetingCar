@@ -43,6 +43,7 @@ import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
 import fr.flareden.meetingcar.metier.entity.Visite;
 import fr.flareden.meetingcar.metier.entity.client.Client;
+import fr.flareden.meetingcar.metier.listener.IAnnonceCreatedHandler;
 import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
 import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
 import fr.flareden.meetingcar.metier.listener.IClientLoadingHandler;
@@ -378,20 +379,24 @@ public class CommunicationWebservice {
 
     // --- ARTICLES ---
 
-    public void createAnnonce(Annonce a, ArrayList<Uri> imagesURI, ContentResolver resolver) {
+    public void createAnnonce(Annonce a, ArrayList<Uri> imagesURI, ContentResolver resolver, IAnnonceCreatedHandler callback) {
         new Thread(() -> {
+            int id = -1;
             try {
                 JSONArray array = new JSONArray();
                 for (int i = 0, max = imagesURI.size(); i < max; i++) {
                     array.put(uploadImage(imagesURI.get(i), resolver));
                 }
 
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "inscription").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/create").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
 
+                connection.setRequestProperty("authorization", token);
+
                 JSONObject send = a.toJsonObject();
+
                 send.put("images_ids", (Object) array);
 
                 try (OutputStream out = connection.getOutputStream()) {
@@ -400,7 +405,8 @@ public class CommunicationWebservice {
                 }
 
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
-                    in.readLine();
+                    JSONObject obj = new JSONObject(in.readLine());
+                    id = obj.optInt("id", -1 );
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -409,6 +415,7 @@ public class CommunicationWebservice {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            callback.onAnnonceCreated(id);
         }).start();
     }
 
@@ -480,10 +487,8 @@ public class CommunicationWebservice {
                             sb.append(line);
                         }
                         JSONObject json = new JSONObject(sb.toString().trim());
-                        String error = json.optString("error", null);
-                        if (error == null) {
-                            retour = Annonce.fromJsonObject(json);
-                        }
+                        System.out.println(sb.toString());
+                        retour = Annonce.fromJsonObject(json.optJSONObject("result"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -497,13 +502,13 @@ public class CommunicationWebservice {
         }
     }
 
-    public void getAnnoncesVendeur(Client c, int page, @NonNull IAnnonceLoaderHandler callback) {
+    public void getAnnoncesVendeur(int idClient, int page, @NonNull IListAnnonceLoaderHandler callback) {
         if (page >= 0) {
 
             new Thread(() -> {
-                Annonce retour = null;
+                ArrayList<Annonce> liste = null;
                 try {
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/user/" + c.getId() + "/" + page).openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/user/" + idClient + "/" + page).openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestMethod("GET");
                     try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
@@ -513,9 +518,11 @@ public class CommunicationWebservice {
                             sb.append(line);
                         }
                         JSONObject json = new JSONObject(sb.toString().trim());
-                        String error = json.optString("error", null);
-                        if (error == null) {
-                            retour = Annonce.fromJsonObject(json);
+                        JSONArray array = json.optJSONArray("result");
+                        if (array != null) {
+                            for (int i = 0, max = array.length(); i < max; i++) {
+                                liste.add(Annonce.fromJsonObject(array.getJSONObject(i)));
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -525,18 +532,18 @@ public class CommunicationWebservice {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                callback.onAnnonceLoad(retour);
+                callback.onListAnnonceLoad(liste);
             }).start();
         }
     }
 
-    public void getAnnoncesAcheteur(Client c, int page, @NonNull IAnnonceLoaderHandler callback) {
+    public void getAnnoncesAcheteur(int idClient, int page, @NonNull IListAnnonceLoaderHandler callback) {
         if (page >= 0) {
 
             new Thread(() -> {
-                Annonce retour = null;
+                ArrayList<Annonce> liste = null;
                 try {
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/purchased/" + c.getId() + "/" + page).openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/purchased/" + idClient + "/" + page).openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestMethod("GET");
                     try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
@@ -546,9 +553,11 @@ public class CommunicationWebservice {
                             sb.append(line);
                         }
                         JSONObject json = new JSONObject(sb.toString().trim());
-                        String error = json.optString("error", null);
-                        if (error == null) {
-                            retour = Annonce.fromJsonObject(json);
+                        JSONArray array = json.optJSONArray("result");
+                        if (array != null) {
+                            for (int i = 0, max = array.length(); i < max; i++) {
+                                liste.add(Annonce.fromJsonObject(array.getJSONObject(i)));
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -558,7 +567,7 @@ public class CommunicationWebservice {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                callback.onAnnonceLoad(retour);
+                callback.onListAnnonceLoad(liste);
             }).start();
         }
     }
@@ -586,36 +595,37 @@ public class CommunicationWebservice {
     }
 
     public void getAnnonceListe(int page, IListAnnonceLoaderHandler callback) {
-        new Thread(() -> {
-            ArrayList<Annonce> liste = new ArrayList<>();
-            try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/page/" + page).openConnection();
-                connection.setConnectTimeout(2500);
-                connection.setRequestMethod("GET");
-                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
-                    StringBuilder sb = new StringBuilder();
-                    String line = "";
-                    while ((line = in.readLine()) != null) {
-                        sb.append(line);
-                    }
-                    JSONObject json = new JSONObject(sb.toString().trim());
-                    JSONArray array = json.optJSONArray("result");
-                    if (array != null) {
-                        for (int i = 0, max = array.length(); i < max; i++) {
-                            liste.add(Annonce.fromJsonObject(array.getJSONObject(i)));
+        if(page >= 0) {
+            new Thread(() -> {
+                ArrayList<Annonce> liste = new ArrayList<>();
+                try {
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/page/" + page).openConnection();
+                    connection.setConnectTimeout(2500);
+                    connection.setRequestMethod("GET");
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while ((line = in.readLine()) != null) {
+                            sb.append(line);
                         }
+                        JSONObject json = new JSONObject(sb.toString().trim());
+                        JSONArray array = json.optJSONArray("result");
+                        if (array != null) {
+                            for (int i = 0, max = array.length(); i < max; i++) {
+                                liste.add(Annonce.fromJsonObject(array.getJSONObject(i)));
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            callback.onListAnnonceLoad(liste);
-        });
-
+                callback.onListAnnonceLoad(liste);
+            }).start();
+        }
     }
 
     public void addVisite(@NonNull Annonce a, Client c) {

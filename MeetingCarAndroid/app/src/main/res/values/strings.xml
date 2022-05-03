@@ -42,4 +42,10 @@
     <string name="pro">Professional</string>
     <string name="pub_announces">Published announces</string>
     <string name="profile_picture">Profile picture</string>
+    <string name="create_announce">Create announce</string>
+    <string name="create">Create</string>
+    <string name="title">Title</string>
+    <string name="price">Price</string>
+    <string name="rental">Rental</string>
+    <string name="announce">Annouce</string>
 </resources>

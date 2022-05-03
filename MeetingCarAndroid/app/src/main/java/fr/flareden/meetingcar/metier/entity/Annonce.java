@@ -40,26 +40,34 @@ public class Annonce {
     }
 
     public static Annonce fromJsonObject(JSONObject json) throws JSONException {
-        JSONObject vendeur = json.getJSONObject("vendeur");
-        JSONObject acheteur = json.optJSONObject("acheteur");
-        JSONArray photosID = json.getJSONArray("photos");
+        Client vendeur = new Client(json.getInt("vendeur"), json.getString("vendeur_nom"), json.optString("vendeur_prenom", ""), new Image(json.optInt("vendeur_photo", -1)));
+        int idAcheteur = json.optInt("acheteur", -1);
+        Client acheteur = null;
+        if(idAcheteur >= 0){
+            acheteur = new Client(idAcheteur, json.getString("acheteur_nom"), json.optString("acheteur_prenom", ""), new Image(json.optInt("acheteur_photo", -1)));
+        }
+        String photosID = json.optString("images_id", "").trim();
         ArrayList<Image> photos = new ArrayList<>();
 
-        for(int i = 0, max = photosID.length(); i < max ; i++){
-            photos.add(new Image(photosID.getInt(i)));
+        if(photosID.length() > 0){
+            String[] photoSplit = photosID.split(",");
+            for(String id : photoSplit){
+                photos.add(new Image(Integer.parseInt(id)));
+            }
         }
+
         return new Annonce(
                 json.getInt("id"),
                 json.getString("titre"),
                 json.getString("description"),
                 (float)json.getDouble("prix"),
-                new Client(vendeur.getInt("id"), vendeur.getString("nom"), vendeur.optString("prenom", ""), new Image(vendeur.optInt("photo",-1))),
+                vendeur,
                 photos,
-                json.getBoolean("disponible"),
-                (acheteur == null ? null : new Client(vendeur.getInt("id"), vendeur.getString("nom"), vendeur.optString("prenom", ""), new Image(vendeur.optInt("photo",-1)))),
+                json.getInt("disponible") == 1,
+                acheteur,
                 new ArrayList<>(),
-                json.getBoolean("location"),
-                json.getBoolean("renforcer")
+                json.getInt("location") == 1,
+                json.getInt("renforcer") == 1
         );
     }
 

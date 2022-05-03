@@ -5,20 +5,26 @@ import android.view.View;
 import java.util.ArrayList;
 
 import fr.flareden.meetingcar.databinding.FragmentHomeBinding;
+import fr.flareden.meetingcar.metier.CommunicationWebservice;
+import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.ui.home.AdvertViewModel;
 import fr.flareden.meetingcar.ui.home.HomeFragment;
 
 public class FollowFragment extends HomeFragment {
 
     @Override
-    protected ArrayList<AdvertViewModel> queryData() {
-
-        // Change DATA
-        ArrayList<AdvertViewModel> data = new ArrayList<>();
-        data.add(new AdvertViewModel(0, "E", "A2", "A3", "A4", AdvertViewModel.TYPE.RENT));
-
-        return data;
-
+    protected void queryData(int idClient) {
+        //TODO : for now return history
+        if(idClient >= 0){
+            CommunicationWebservice.getINSTANCE().getAnnoncesAcheteur(idClient, 0, liste -> {
+                for(Annonce a : liste){
+                    super.data.add(new AdvertViewModel(a.getId(), a.getTitle(), a.getDesc(), a.getVendeur().getAdresse(), ""+a.getPrix(), (a.isLocation() ? AdvertViewModel.TYPE.RENT : AdvertViewModel.TYPE.SELL) ));
+                }
+                getActivity().runOnUiThread(() -> {
+                    super.adapter.notifyDataSetChanged();
+                });
+            });
+        }
     }
 
     @Override

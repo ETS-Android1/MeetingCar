@@ -47,4 +47,15 @@
         android:label="@string/title_activity_login"
         tools:layout="@layout/fragment_login" />
 
+    <fragment
+        android:id="@+id/nav_create_announce"
+        android:name="fr.flareden.meetingcar.ui.create_annonce.CreateAnnonceFragment"
+        android:label="@string/create_announce"
+        tools:layout="@layout/fragment_create_annonce" />
+
+    <fragment
+        android:id="@+id/nav_annonce"
+        android:name="fr.flareden.meetingcar.ui.annonce.AnnonceFragment"
+        android:label="@string/announce"
+        tools:layout="@layout/fragment_annonce" />
 </navigation>
