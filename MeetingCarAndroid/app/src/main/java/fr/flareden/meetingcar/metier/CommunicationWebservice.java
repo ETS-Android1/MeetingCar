@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -149,7 +151,7 @@ public class CommunicationWebservice {
                                 conn.setConnectTimeout(2500);
                                 conn.setRequestMethod("GET");
                                 try (InputStream in2 = conn.getInputStream()) {
-                                    retour.setImage(new Image(idImage,Drawable.createFromStream(in2, null)));
+                                    retour.setImage(new Image(idImage, Drawable.createFromStream(in2, null)));
                                 }
                             }
 
@@ -210,18 +212,18 @@ public class CommunicationWebservice {
             }).start();
         }
     }
-    public void updateClient(Client c, Uri imageURI, ContentResolver resolver){
+
+    public void updateClient(Client c, Uri imageURI, ContentResolver resolver) {
         new Thread(() -> {
             IRegisterHandler.State state = IRegisterHandler.State.SERVER_ERROR;
             try {
                 int imageID = -2;
-                if(c.getImage() != null){
+                if (c.getImage() != null) {
                     imageID = c.getImage().getId();
                 }
-                if(imageURI != null){
+                if (imageURI != null) {
                     imageID = uploadImage(imageURI, resolver);
                 }
-
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "update/client").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
@@ -236,15 +238,19 @@ public class CommunicationWebservice {
                     out.flush();
                 }
 
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(connection.getInputStream())))) {
+                    System.out.println(in.readLine());
+                }
+
                 if (imageID >= 0) {
                     HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "image/" + imageID).openConnection();
                     conn.setConnectTimeout(2500);
-                    conn.setRequestMethod("GET");
                     try (InputStream in = conn.getInputStream()) {
 
-                        c.setImage(new Image(imageID,Drawable.createFromStream(in, null)));
+                        c.setImage(new Image(imageID, Drawable.createFromStream(in, null)));
                     }
                 }
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -256,7 +262,7 @@ public class CommunicationWebservice {
         }).start();
     }
 
-    public void getClient(int id, IClientLoadingHandler callback){
+    public void getClient(int id, IClientLoadingHandler callback) {
         new Thread(() -> {
             Client retour = null;
             try {
@@ -271,8 +277,8 @@ public class CommunicationWebservice {
                         sb.append(line);
                     }
                     JSONObject json = new JSONObject(sb.toString().trim());
-                    String error = json.optString("error", null) ;
-                    if(error == null){
+                    String error = json.optString("error", null);
+                    if (error == null) {
                         retour = Client.fromJsonObject(json);
                         int idImage = json.getInt("photo");
                         //ASK IMAGE
@@ -372,11 +378,11 @@ public class CommunicationWebservice {
 
     // --- ARTICLES ---
 
-    public void createAnnonce(Annonce a, ArrayList<Uri> imagesURI, ContentResolver resolver){
+    public void createAnnonce(Annonce a, ArrayList<Uri> imagesURI, ContentResolver resolver) {
         new Thread(() -> {
             try {
                 JSONArray array = new JSONArray();
-                for(int i = 0, max = imagesURI.size(); i < max; i++){
+                for (int i = 0, max = imagesURI.size(); i < max; i++) {
                     array.put(uploadImage(imagesURI.get(i), resolver));
                 }
 
@@ -394,7 +400,7 @@ public class CommunicationWebservice {
                 }
 
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
-
+                    in.readLine();
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -406,23 +412,25 @@ public class CommunicationWebservice {
         }).start();
     }
 
-    public void updateAnnonce(Annonce a, ArrayList<Uri> imagesURI, ContentResolver resolver){
+    public void updateAnnonce(Annonce a, ArrayList<Uri> imagesURI, ContentResolver resolver) {
         new Thread(() -> {
             try {
                 JSONArray array = new JSONArray();
-                for(int i = 0, max = imagesURI.size(); i < max; i++){
+                for (int i = 0, max = imagesURI.size(); i < max; i++) {
                     array.put(uploadImage(imagesURI.get(i), resolver));
                 }
                 ArrayList<Image> photos = (ArrayList<Image>) a.getPhotos().clone();
-                for(Image image : photos){
-                    if(image.isToDelete()){
+                for (Image image : photos) {
+                    if (image.isToDelete()) {
                         new Thread(() -> {
                             try {
                                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "removeimage/" + image.getId()).openConnection();
                                 connection.setConnectTimeout(2500);
                                 connection.setRequestMethod("GET");
                                 connection.setRequestProperty("authorization", token);
-                                connection.connect();
+                                try (BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(connection.getInputStream())))) {
+                                    in.readLine();
+                                }
                             } catch (ProtocolException e) {
                                 e.printStackTrace();
                             } catch (MalformedURLException e) {
@@ -457,7 +465,7 @@ public class CommunicationWebservice {
         }).start();
     }
 
-    public void getAnnonce(int idAnnonce,@NonNull IAnnonceLoaderHandler callback){
+    public void getAnnonce(int idAnnonce, @NonNull IAnnonceLoaderHandler callback) {
         if (idAnnonce >= 0) {
             new Thread(() -> {
                 Annonce retour = null;
@@ -472,8 +480,8 @@ public class CommunicationWebservice {
                             sb.append(line);
                         }
                         JSONObject json = new JSONObject(sb.toString().trim());
-                        String error = json.optString("error", null) ;
-                        if(error == null){
+                        String error = json.optString("error", null);
+                        if (error == null) {
                             retour = Annonce.fromJsonObject(json);
                         }
                     } catch (JSONException e) {
@@ -489,9 +497,75 @@ public class CommunicationWebservice {
         }
     }
 
-    public void loadImagesAnnonce(@NonNull Annonce a, IAnnonceLoaderHandler callback){
-        for(Image image : a.getPhotos()){
-            if(image.getDrawable() == null){
+    public void getAnnoncesVendeur(Client c, int page, @NonNull IAnnonceLoaderHandler callback) {
+        if (page >= 0) {
+
+            new Thread(() -> {
+                Annonce retour = null;
+                try {
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/user/" + c.getId() + "/" + page).openConnection();
+                    connection.setConnectTimeout(2500);
+                    connection.setRequestMethod("GET");
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while ((line = in.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        JSONObject json = new JSONObject(sb.toString().trim());
+                        String error = json.optString("error", null);
+                        if (error == null) {
+                            retour = Annonce.fromJsonObject(json);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                callback.onAnnonceLoad(retour);
+            }).start();
+        }
+    }
+
+    public void getAnnoncesAcheteur(Client c, int page, @NonNull IAnnonceLoaderHandler callback) {
+        if (page >= 0) {
+
+            new Thread(() -> {
+                Annonce retour = null;
+                try {
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/purchased/" + c.getId() + "/" + page).openConnection();
+                    connection.setConnectTimeout(2500);
+                    connection.setRequestMethod("GET");
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while ((line = in.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        JSONObject json = new JSONObject(sb.toString().trim());
+                        String error = json.optString("error", null);
+                        if (error == null) {
+                            retour = Annonce.fromJsonObject(json);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                callback.onAnnonceLoad(retour);
+            }).start();
+        }
+    }
+
+    public void loadImagesAnnonce(@NonNull Annonce a, IAnnonceLoaderHandler callback) {
+        for (Image image : a.getPhotos()) {
+            if (image.getDrawable() == null) {
                 new Thread(() -> {
                     try {
                         HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "image/" + image.getId()).openConnection();
@@ -511,7 +585,7 @@ public class CommunicationWebservice {
         }
     }
 
-    public void getAnnonceListe(int page, IListAnnonceLoaderHandler callback){
+    public void getAnnonceListe(int page, IListAnnonceLoaderHandler callback) {
         new Thread(() -> {
             ArrayList<Annonce> liste = new ArrayList<>();
             try {
@@ -526,8 +600,8 @@ public class CommunicationWebservice {
                     }
                     JSONObject json = new JSONObject(sb.toString().trim());
                     JSONArray array = json.optJSONArray("result");
-                    if(array != null){
-                        for(int i = 0, max = array.length(); i < max; i++){
+                    if (array != null) {
+                        for (int i = 0, max = array.length(); i < max; i++) {
                             liste.add(Annonce.fromJsonObject(array.getJSONObject(i)));
                         }
                     }
@@ -544,11 +618,45 @@ public class CommunicationWebservice {
 
     }
 
-    public void addVisite(@NonNull Annonce a, Client c){
+    public void addVisite(@NonNull Annonce a, Client c) {
         new Thread(() -> {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
             String horodatage = sdf.format(Calendar.getInstance().getTime());
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/addVisite/" + a.getId()).openConnection();
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("POST");
 
+                JSONObject send = new JSONObject();
+
+                send.put("client", (c == null ? null : c.getId()));
+                send.put("horodatage", horodatage);
+                send.put("localisation", (c == null ? null : c.getAdresse()));
+
+                try (OutputStream out = connection.getOutputStream()) {
+                    out.write(send.toString().getBytes(StandardCharsets.UTF_8));
+                    out.flush();
+                }
+
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    JSONObject obj = new JSONObject(in.readLine());
+                    int id = obj.optInt("id", -1);
+                    if(id >= 0){
+                        a.addVisite(new Visite(id, c, horodatage));
+                    }
+                }
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         });
     }
