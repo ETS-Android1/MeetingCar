@@ -194,12 +194,16 @@ public class CreateAnnonceFragment extends Fragment {
         boolean location = binding.cbCreateAnnonceRental.isChecked();
         Annonce a = new Annonce(-1, titre, description, price ,  Metier.getINSTANCE().getUtilisateur(), null, true, null, null, location, false);
         CommunicationWebservice.getINSTANCE().createAnnonce(a, this.listImage, getContext().getContentResolver(), (idAnnonce -> {
+            System.out.println("ANNONCE : " + idAnnonce);
             if(idAnnonce >= 0){
-                Bundle b = new Bundle();
-                b.putInt("idAnnonce", idAnnonce);
-                NavController navController = NavHostFragment.findNavController(this);
-                navController.popBackStack();
-                navController.navigate(R.id.nav_annonce, b);
+                getActivity().runOnUiThread(()->{
+                    Bundle b = new Bundle();
+                    b.putInt("idAnnonce", idAnnonce);
+                    NavController navController = NavHostFragment.findNavController(this);
+                    navController.popBackStack();
+                    navController.navigate(R.id.nav_annonce, b);
+                    System.out.println("NAVIGATE");
+                });
             } else {
                 //TODO : error
             }

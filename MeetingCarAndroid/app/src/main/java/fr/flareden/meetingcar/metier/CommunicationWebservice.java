@@ -405,7 +405,14 @@ public class CommunicationWebservice {
                 }
 
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
-                    JSONObject obj = new JSONObject(in.readLine());
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null){
+                        sb.append(line);
+                    }
+                    System.out.println("DATA : " + sb.toString());
+                    JSONObject obj = new JSONObject(sb.toString().trim());
+
                     id = obj.optInt("id", -1 );
                 }
             } catch (MalformedURLException e) {
@@ -415,7 +422,10 @@ public class CommunicationWebservice {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            callback.onAnnonceCreated(id);
+            if(callback != null){
+                callback.onAnnonceCreated(id);
+            }
+
         }).start();
     }
 
