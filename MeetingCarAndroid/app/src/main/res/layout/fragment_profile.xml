@@ -51,7 +51,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="10dp"
-                    android:text=""
                     android:textColor="#fff"
                     android:textSize="21sp"
                     android:textStyle="bold"
@@ -245,7 +244,7 @@
         android:contentDescription="@string/desc_img"
         android:focusable="true"
         android:src="@drawable/ic_baseline_edit_24"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/linearLayout5"
         tools:ignore="SpeakableTextPresentCheck" />

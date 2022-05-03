@@ -4,47 +4,47 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import fr.flareden.meetingcar.databinding.FragmentProfileBinding;
+import fr.flareden.meetingcar.metier.Metier;
+import fr.flareden.meetingcar.metier.entity.client.Client;
+import fr.flareden.meetingcar.metier.listener.IClientLoadingHandler;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements IClientLoadingHandler {
 
     private FragmentProfileBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        // BINDING FRAGMENT
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // TODO :
+        // CURRENT USER && TARGET USER
+        int userID = savedInstanceState.getInt("userID", -1);
+        if(userID == -1 || userID == Metier.getINSTANCE().getUtilisateur().getId()){
+            onClientLoad(Metier.getINSTANCE().getUtilisateur(), true);
+        }
+        else{
+            // TODO : Recup la target
+            // mettre une var dans le bundle
+            // check si la var est = current.getID()
+            // si true => c'est ok
+            // sinon => retire edit + query serv du mec cible
+        }
 
-        // Load Data Client
-        // TextView ...
-        // Hints ...
 
-        // If Client ID = Profile ID
-        // binding.profileFabEdit.setVisibility(View.VISIBLE);
-
-        // If professional
-        // binding.profileTvPro.setVisibility(View.VISIBLE);
-        // Else ...
+        // TODO : Load Data Client (TextView && Hints)
+        // TODO : Client.getClass == Professionnel || Particulier ==> binding.profileTvPro.setVisibility(View.VISIBLE);
 
         // FAB BINDING
-        binding.profileFabEdit.setOnClickListener((View view) -> {
-            editProfile();
-        });
-        binding.profileFabCheck.setOnClickListener((View view) -> {
-            checkEditProfile();
-        });
-        binding.profileFabCancel.setOnClickListener((View view) -> {
-            cancelEditProfile();
-        });
+        binding.profileFabEdit.setOnClickListener((View view) -> editProfile());
+        binding.profileFabCheck.setOnClickListener((View view) -> checkEditProfile());
+        binding.profileFabCancel.setOnClickListener((View view) -> cancelEditProfile());
 
         return root;
     }
@@ -73,7 +73,7 @@ public class ProfileFragment extends Fragment {
         binding.profileFabCheck.setVisibility(View.VISIBLE);
 
         binding.profileImage.setOnClickListener((View view) -> {
-            // Modifiy img?
+            // TODO : modify img
         });
     }
 
@@ -98,5 +98,17 @@ public class ProfileFragment extends Fragment {
     public void checkEditProfile(){
         cancelEditProfile();
         System.out.println("Checked!");
+    }
+
+    @Override
+    public void onClientLoad(Client c, boolean self) {
+        getActivity().runOnUiThread( () -> {
+            binding.profileTvName.setText(c.getNom() + " " + c.getPrenom());
+            binding.profileTvEmail.setText(c.getEmail());
+            binding.profileTvPhone.setText(c.getTelephone());
+            if(self){
+                binding.profileFabEdit.setVisibility(View.VISIBLE);
+            }
+        });
     }
 }
