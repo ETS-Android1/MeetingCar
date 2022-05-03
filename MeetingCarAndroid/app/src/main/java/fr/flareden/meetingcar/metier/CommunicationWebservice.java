@@ -214,7 +214,10 @@ public class CommunicationWebservice {
         new Thread(() -> {
             IRegisterHandler.State state = IRegisterHandler.State.SERVER_ERROR;
             try {
-                int imageID = c.getImage().getId();
+                int imageID = -2;
+                if(c.getImage() != null){
+                    imageID = c.getImage().getId();
+                }
                 if(imageURI != null){
                     imageID = uploadImage(imageURI, resolver);
                 }
