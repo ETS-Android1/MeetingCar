@@ -1,8 +1,17 @@
 package fr.flareden.meetingcar.ui.login;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +19,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -18,6 +32,9 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,6 +49,31 @@ import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
 
 public class LoginFragment extends Fragment implements IConnectHandler, IRegisterHandler {
     private FragmentLoginBinding binding;
+
+    private Drawable image_profile;
+    private Uri imageURI = null;
+    private byte[] imageData = null;
+    private boolean imageRead = false;
+    private ActivityResultLauncher<String> permissionResult = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+        @Override
+        public void onActivityResult(Boolean result) {
+            if (result) {
+                openImageSelector();
+            }
+        }
+    });
+
+    private ActivityResultLauncher<Intent> photoChooser = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                imageURI = result.getData().getData();
+
+            }
+        }
+    });
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -75,7 +117,23 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
             askCancelRegister(view);
         });
 
+
+        binding.btnSelectProfilePicture.setOnClickListener((View view) -> {
+            if (ContextCompat.checkSelfPermission(this.getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                permissionResult.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+            } else {
+                openImageSelector();
+            }
+        });
         return root;
+    }
+
+
+    public void openImageSelector() {
+        Intent pickIntent = new Intent(Intent.ACTION_PICK);
+        pickIntent.setType("image/*");
+
+        photoChooser.launch(pickIntent);
     }
 
     public void askRegisterMenu(View view) {
@@ -125,10 +183,12 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
         String phone = binding.tfPhoneRegister.getEditText().getText().toString().trim();
         String address = binding.tfAddressRegister.getEditText().getText().toString().trim();
 
-        String birthday = binding.tfBirthdayRegister.getEditText().getText().toString().trim();
-        String[] splitted = birthday.split("/");
-        birthday = splitted[2] + splitted[1] + splitted[0];
 
+        String birthday = binding.tfBirthdayRegister.getEditText().getText().toString().trim();
+        if(birthday.length() == 8) {
+            String[] splitted = birthday.split("/");
+            birthday = splitted[2] + splitted[1] + splitted[0];
+        }
         if (email.length() <= 0) {
             emailTIL.setError(getResources().getString(R.string.error_empty));
             emailTIL.setErrorEnabled(true);
@@ -155,7 +215,7 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
         }
 
         Client c = new Client(-1, surname, name, email, phone, birthday, address);
-        CommunicationWebservice.getINSTANCE().inscription(c, password, this);
+        CommunicationWebservice.getINSTANCE().inscription(c, password, imageURI, this.getActivity().getContentResolver(), this);
 
     }
 

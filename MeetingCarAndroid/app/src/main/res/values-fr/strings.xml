@@ -41,4 +41,5 @@
     <string name="settings">Options</string>
     <string name="pro">Professionnel</string>
     <string name="pub_announces">Annonces publiées</string>
+    <string name="profile_picture">Image de profile</string>
 </resources>

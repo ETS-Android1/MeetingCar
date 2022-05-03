@@ -20,9 +20,11 @@ import com.google.android.material.navigation.NavigationView;
 import fr.flareden.meetingcar.databinding.ActivityMainBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
+import fr.flareden.meetingcar.metier.entity.client.Client;
+import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
 import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
 
-public class MainActivity extends AppCompatActivity implements IImageReceivingHandler {
+public class MainActivity extends AppCompatActivity implements IClientChangeHandler {
     // NAVIGATION DRAWER
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -61,8 +63,7 @@ public class MainActivity extends AppCompatActivity implements IImageReceivingHa
                 b.setText(R.string.action_sign_in);
             }
         });
-
-        // CommunicationWebservice.getINSTANCE().getImage(1, this);
+        Metier.getINSTANCE().addOnClientChange(this);
     }
 
     @Override
@@ -79,11 +80,11 @@ public class MainActivity extends AppCompatActivity implements IImageReceivingHa
     }
 
     @Override
-    public void receiveImage(Drawable d) {
-        runOnUiThread(()->{
-            if(d != null) {
+    public void onClientChange(Client c) {
+        runOnUiThread(()-> {
+            if (c.getImage() != null) {
                 ImageView iv = findViewById(R.id.profile_image);
-                iv.setImageDrawable(d);
+                iv.setImageDrawable(c.getImage());
             }
         });
     }

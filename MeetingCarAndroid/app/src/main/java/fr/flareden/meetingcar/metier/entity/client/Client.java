@@ -1,5 +1,6 @@
 package fr.flareden.meetingcar.metier.entity.client;
 
+import android.graphics.drawable.Drawable;
 import android.util.JsonReader;
 import android.util.JsonToken;
 import android.util.JsonWriter;
@@ -21,6 +22,7 @@ public class Client {
     private String datenaissance;
     private ArrayList<MoyenCommunication> communications;
     private String adresse;
+    private Drawable image;
 
     public Client(int id, String nom, String prenom, String email, String telephone, String datenaissance, String adresse, ArrayList<MoyenCommunication> communications) {
         this.id = id;
@@ -31,7 +33,7 @@ public class Client {
         this.datenaissance = datenaissance;
         this.adresse = adresse;
         this.communications = communications;
-
+        this.image = null;
     }
 
     public Client(int id, String nom, String prenom, String email, String telephone, String datenaissance,String adresse) {
@@ -42,6 +44,7 @@ public class Client {
         this.telephone = telephone;
         this.datenaissance = datenaissance;
         this.adresse = adresse;
+        this.image = null;
 
         this.communications = null;
     }
@@ -201,4 +204,11 @@ public class Client {
         return result;
     }
 
+    public void setImage(Drawable image) {
+        this.image = image;
+    }
+
+    public Drawable getImage() {
+        return image;
+    }
 }

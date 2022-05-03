@@ -1,6 +1,10 @@
 package fr.flareden.meetingcar.metier.entity;
 
+import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -12,7 +16,7 @@ public class Annonce {
     private String desc;
     private float prix;
     private Client vendeur;
-    private ArrayList<MediaStore.Images> photos;
+    private ArrayList<Drawable> photos;
     private boolean disponible;
     private Client acheteur;
     private ArrayList<Visite> visites;
@@ -20,7 +24,7 @@ public class Annonce {
     private boolean renforcer;
 
     // CONSTRUCTOR
-    public Annonce(int id, String title, String desc, float prix, Client vendeur, ArrayList<MediaStore.Images> photos, boolean disponible, Client acheteur, ArrayList<Visite> visites, boolean location, boolean renforcer) {
+    public Annonce(int id, String title, String desc, float prix, Client vendeur, ArrayList<Drawable> photos, boolean disponible, Client acheteur, ArrayList<Visite> visites, boolean location, boolean renforcer) {
         this.id = id;
         this.title = title;
         this.desc = desc;
@@ -35,13 +39,15 @@ public class Annonce {
     }
 
     // METHODS
-    public void modifier(){
+    public void modifier() {
         // TODO
     }
-    public void supprimer(){
+
+    public void supprimer() {
         // TODO
     }
-    public void renforcer(){
+
+    public void renforcer() {
         // TODO
     }
 
@@ -86,11 +92,11 @@ public class Annonce {
         this.vendeur = vendeur;
     }
 
-    public ArrayList<MediaStore.Images> getPhotos() {
+    public ArrayList<Drawable> getPhotos() {
         return photos;
     }
 
-    public void setPhotos(ArrayList<MediaStore.Images> photos) {
+    public void setPhotos(ArrayList<Drawable> photos) {
         this.photos = photos;
     }
 
@@ -132,5 +138,22 @@ public class Annonce {
 
     public void setRenforcer(boolean renforcer) {
         this.renforcer = renforcer;
+    }
+
+    public JSONObject toJsonObject() throws JSONException {
+        JSONObject retour = new JSONObject();
+        retour.put("id", this.id);
+        retour.put("titre", this.title);
+        retour.put("description", this.desc);
+        retour.put("prix", this.prix);
+        retour.put("vendeur", this.vendeur.getId());
+        if (acheteur != null) {
+            retour.put("acheteur",(acheteur != null) ? this.acheteur.getId() : null);
+        }
+        retour.put("disponible", this.disponible);
+        retour.put("location", this.location);
+        retour.put("renforcer", this.renforcer);
+
+        return retour;
     }
 }
