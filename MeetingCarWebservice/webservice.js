@@ -309,7 +309,7 @@ app.post('/annonce/create', authenticateJWT , function (req, res) {
 				if(err) throw err;
 				
 			});
-			res.json({id : "idAnnonce"});
+			res.json({id : idAnnonce});
 		});
 	} else {
 		res.json({error:"wrongVendeur"});
