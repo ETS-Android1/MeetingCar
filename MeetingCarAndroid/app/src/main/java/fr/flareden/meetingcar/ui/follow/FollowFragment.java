@@ -29,6 +29,6 @@ public class FollowFragment extends HomeFragment {
 
     @Override
     protected void initFab(FragmentHomeBinding binding) {
-        binding.homeFabAdd.setVisibility(View.GONE);
+
     }
 }

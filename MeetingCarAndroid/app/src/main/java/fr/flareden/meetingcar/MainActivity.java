@@ -1,5 +1,6 @@
 package fr.flareden.meetingcar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -10,12 +11,14 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import fr.flareden.meetingcar.databinding.ActivityMainBinding;
@@ -59,6 +62,14 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
                 drawer.closeDrawer(Gravity.LEFT);
             } else {
                 Metier.getINSTANCE().disconnect();
+                navController.popBackStack();
+                navController.navigate(R.id.nav_home);
+                drawer.closeDrawer(Gravity.LEFT);
+
+                FragmentManager fm = this.getSupportFragmentManager();
+                for(int i = 0 ; i<fm.getBackStackEntryCount() ; i++){
+                    fm.popBackStack();
+                }
             }
         });
         Metier.getINSTANCE().addOnClientChange(this);

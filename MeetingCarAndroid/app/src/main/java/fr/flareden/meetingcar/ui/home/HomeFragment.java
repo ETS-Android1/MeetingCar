@@ -20,7 +20,10 @@ import java.util.ArrayList;
 import fr.flareden.meetingcar.R;
 import fr.flareden.meetingcar.databinding.FragmentHomeBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
+import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.Annonce;
+import fr.flareden.meetingcar.metier.entity.client.Client;
+import fr.flareden.meetingcar.metier.listener.IConnectHandler;
 import fr.flareden.meetingcar.metier.listener.IListAnnonceLoaderHandler;
 
 public class HomeFragment extends Fragment {
@@ -37,6 +40,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
+
+        data.clear();
         if(savedInstanceState != null){
             queryData(savedInstanceState.getInt("idClient", -1));
         } else {
@@ -100,7 +105,26 @@ public class HomeFragment extends Fragment {
             navController.navigate(R.id.nav_create_announce);
         });
 
-        initFab(binding);
+        Metier.getINSTANCE().isLogin(new IConnectHandler() {
+            @Override
+            public void onConnectionSuccess(Client c, String hashedPassword, boolean isAutoConnect) {
+
+            }
+
+            @Override
+            public void onConnectionFail(boolean unknown) {
+
+            }
+
+            @Override
+            public void askIsLogin(boolean isLogin) {
+                if(isLogin){
+                    getActivity().runOnUiThread(() -> {
+                        initFab(binding);
+                    });
+                }
+            }
+        });
 
         return binding.getRoot();
     }
@@ -108,6 +132,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        data.clear();
         binding = null;
     }
 
@@ -128,5 +153,6 @@ public class HomeFragment extends Fragment {
     }
 
     protected void initFab(FragmentHomeBinding binding) {
+        binding.homeFabAdd.setVisibility(View.VISIBLE);
     }
 }

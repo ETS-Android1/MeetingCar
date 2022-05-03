@@ -41,8 +41,9 @@ public class AnnonceFragment extends Fragment {
                     @Override
                     public void onAnnonceLoad(Annonce a) {
                         if(a != null){
-                            binding.tvAnnonceTitre.setText(a.getTitle());
-
+                            getActivity().runOnUiThread(() -> {
+                                binding.tvAnnonceTitre.setText(a.getTitle());
+                            });
                         }
                     }
 
