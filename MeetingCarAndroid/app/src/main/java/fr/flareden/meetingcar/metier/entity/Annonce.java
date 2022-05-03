@@ -3,6 +3,7 @@ package fr.flareden.meetingcar.metier.entity;
 import android.graphics.drawable.Drawable;
 import android.provider.MediaStore;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,6 +37,30 @@ public class Annonce {
         this.visites = visites;
         this.location = location;
         this.renforcer = renforcer;
+    }
+
+    public static Annonce fromJsonObject(JSONObject json) throws JSONException {
+        JSONObject vendeur = json.getJSONObject("vendeur");
+        JSONObject acheteur = json.optJSONObject("acheteur");
+        JSONArray photosID = json.getJSONArray("photos");
+        ArrayList<Image> photos = new ArrayList<>();
+
+        for(int i = 0, max = photosID.length(); i < max ; i++){
+            photos.add(new Image(photosID.getInt(i)));
+        }
+        return new Annonce(
+                json.getInt("id"),
+                json.getString("titre"),
+                json.getString("description"),
+                (float)json.getDouble("prix"),
+                new Client(vendeur.getInt("id"), vendeur.getString("nom"), vendeur.optString("prenom", ""), new Image(vendeur.optInt("photo",-1))),
+                photos,
+                json.getBoolean("disponible"),
+                (acheteur == null ? null : new Client(vendeur.getInt("id"), vendeur.getString("nom"), vendeur.optString("prenom", ""), new Image(vendeur.optInt("photo",-1)))),
+                new ArrayList<>(),
+                json.getBoolean("location"),
+                json.getBoolean("renforcer")
+        );
     }
 
     // METHODS

@@ -31,18 +31,22 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
+import fr.flareden.meetingcar.metier.entity.Visite;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
 import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
 import fr.flareden.meetingcar.metier.listener.IClientLoadingHandler;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
 import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
+import fr.flareden.meetingcar.metier.listener.IListAnnonceLoaderHandler;
 import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
 
 public class CommunicationWebservice {
@@ -210,7 +214,10 @@ public class CommunicationWebservice {
         new Thread(() -> {
             IRegisterHandler.State state = IRegisterHandler.State.SERVER_ERROR;
             try {
-                int imageID = uploadImage(imageURI, resolver);
+                int imageID = c.getImage().getId();
+                if(imageURI != null){
+                    imageID = uploadImage(imageURI, resolver);
+                }
 
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "update/client").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
@@ -464,19 +471,7 @@ public class CommunicationWebservice {
                         JSONObject json = new JSONObject(sb.toString().trim());
                         String error = json.optString("error", null) ;
                         if(error == null){
-                            //TODO
-                            /*retour = Annonce.fromJsonObject(json);
-
-                            int idImage = json.getInt("photo");
-                            //ASK IMAGE
-                            if (idImage >= 0) {
-                                HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "image/" + idImage).openConnection();
-                                conn.setConnectTimeout(2500);
-                                conn.setRequestMethod("GET");
-                                try (InputStream in2 = conn.getInputStream()) {
-                                    retour.setImage(new Image(idImage, Drawable.createFromStream(in2, null)));
-                                }
-                            }*/
+                            retour = Annonce.fromJsonObject(json);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -489,6 +484,70 @@ public class CommunicationWebservice {
                 callback.onAnnonceLoad(retour);
             }).start();
         }
+    }
+
+    public void loadImagesAnnonce(@NonNull Annonce a, IAnnonceLoaderHandler callback){
+        for(Image image : a.getPhotos()){
+            if(image.getDrawable() == null){
+                new Thread(() -> {
+                    try {
+                        HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "image/" + image.getId()).openConnection();
+                        connection.setConnectTimeout(2500);
+                        connection.setRequestMethod("GET");
+                        try (InputStream in = connection.getInputStream()) {
+                            image.setDrawable(Drawable.createFromStream(in, null));
+                        }
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    callback.onImageAnnonceLoad(a, image);
+                }).start();
+            }
+        }
+    }
+
+    public void getAnnonceListe(int page, IListAnnonceLoaderHandler callback){
+        new Thread(() -> {
+            ArrayList<Annonce> liste = new ArrayList<>();
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/page/" + page).openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("GET");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line = "";
+                    while ((line = in.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    JSONObject json = new JSONObject(sb.toString().trim());
+                    JSONArray array = json.optJSONArray("result");
+                    if(array != null){
+                        for(int i = 0, max = array.length(); i < max; i++){
+                            liste.add(Annonce.fromJsonObject(array.getJSONObject(i)));
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            callback.onListAnnonceLoad(liste);
+        });
+
+    }
+
+    public void addVisite(@NonNull Annonce a, Client c){
+        new Thread(() -> {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+            String horodatage = sdf.format(Calendar.getInstance().getTime());
+
+
+        });
     }
 
     // --- FIN ARTICLES ---

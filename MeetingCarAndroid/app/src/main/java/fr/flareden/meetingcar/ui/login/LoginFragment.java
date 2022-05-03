@@ -238,21 +238,6 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
         });
     }
 
-    private void changeButton(boolean isLogin) {
-        this.getActivity().runOnUiThread(() -> {
-            Button b = this.getActivity().findViewById(R.id.buttonLogin);
-            TextView tv = getActivity().findViewById(R.id.tv_username);
-            if (isLogin) {
-                b.setText(getResources().getString(R.string.disconnect));
-                tv.setText(Metier.getINSTANCE().getUtilisateur().getNom());
-            } else {
-                b.setText(getResources().getString(R.string.action_sign_in));
-                tv.setText(R.string.guest);
-            }
-        });
-    }
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -270,7 +255,6 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
         }
         Metier.getINSTANCE().setUtilisateur(c);
 
-        changeButton(true);
         goBack();
     }
 
@@ -289,7 +273,6 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
 
     @Override
     public void askIsLogin(boolean isLogin) {
-        changeButton(isLogin);
         if (isLogin) {
             goBack();
         }

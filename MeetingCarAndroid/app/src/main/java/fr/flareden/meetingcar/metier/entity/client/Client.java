@@ -54,6 +54,14 @@ public class Client {
     public Client() {
     }
 
+    public Client(int id, String nom, String prenom, Image image) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.image = image;
+        this.communications = null;
+    }
+
     public void addMoyenCommunication(MoyenCommunication com){
         if(this.communications == null){
             this.communications = new ArrayList<>();
@@ -194,11 +202,11 @@ public class Client {
         return new Client(
                 obj.getInt("id"),
                 obj.getString("nom"),
-                obj.getString("prenom"),
-                obj.getString("email"),
-                obj.getString("telephone"),
-                obj.getString("date_naissance"),
-                obj.getString("adresse")
+                obj.optString("prenom", ""),
+                obj.optString("email", ""),
+                obj.optString("telephone", ""),
+                obj.optString("date_naissance", ""),
+                obj.optString("adresse", "")
         );
     }
 
