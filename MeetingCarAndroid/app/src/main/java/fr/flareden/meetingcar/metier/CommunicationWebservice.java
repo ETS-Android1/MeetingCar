@@ -406,7 +406,6 @@ public class CommunicationWebservice {
                     while ((line = in.readLine()) != null){
                         sb.append(line);
                     }
-                    System.out.println("DATA : " + sb.toString());
                     JSONObject obj = new JSONObject(sb.toString().trim());
 
                     id = obj.optInt("id", -1 );
@@ -493,7 +492,6 @@ public class CommunicationWebservice {
                             sb.append(line);
                         }
                         JSONObject json = new JSONObject(sb.toString().trim());
-                        System.out.println(sb.toString());
                         retour = Annonce.fromJsonObject(json.optJSONObject("result"));
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -662,7 +660,6 @@ public class CommunicationWebservice {
                     while ((line = in.readLine()) != null){
                         sb.append(line);
                     }
-                    System.out.println("QUERY : " + sb.toString());
                     JSONObject json = new JSONObject(sb.toString().trim());
                     JSONArray array = json.optJSONArray("result");
                     if (array != null) {
@@ -756,7 +753,6 @@ public class CommunicationWebservice {
                     while ((line = in.readLine()) != null){
                         sb.append(line);
                     }
-                    System.out.println("DATA : " + sb.toString());
                     JSONObject obj = new JSONObject(sb.toString().trim());
 
                     id = obj.optInt("id", -1 );
