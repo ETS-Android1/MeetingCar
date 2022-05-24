@@ -1,13 +1,18 @@
 package fr.flareden.meetingcar;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -21,13 +26,17 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import fr.flareden.meetingcar.databinding.ActivityMainBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
+import fr.flareden.meetingcar.metier.listener.IConnectHandler;
 
-public class MainActivity extends AppCompatActivity implements IClientChangeHandler {
+public class MainActivity extends AppCompatActivity implements IClientChangeHandler, IConnectHandler {
     // NAVIGATION DRAWER
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -73,7 +82,10 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
             }
         });
         Metier.getINSTANCE().addOnClientChange(this);
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -130,5 +142,44 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
         binding.navView.getMenu().findItem(R.id.nav_follow).setVisible(visible);
         binding.navView.getMenu().findItem(R.id.nav_announces).setVisible(visible);
         binding.navView.getMenu().findItem(R.id.nav_history).setVisible(visible);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Metier.getINSTANCE().isLogin(this);
+    }
+
+    @Override
+    public void onConnectionSuccess(Client c, String hashedPassword, boolean isAutoConnect) {
+        if(isAutoConnect){
+            Metier.getINSTANCE().setUtilisateur(c);
+
+        }
+    }
+
+    @Override
+    public void onConnectionFail(boolean unknown) {
+        SharedPreferences.Editor editor = this.getApplicationContext().getSharedPreferences("auto_connect", Context.MODE_PRIVATE).edit();
+        editor.remove("email");
+        editor.remove("password");
+        editor.remove("date");
+    }
+
+    @Override
+    public void askIsLogin(boolean isLogin) {
+        System.out.println("is Login ? : " + isLogin);
+        if(!isLogin){
+            SharedPreferences sp = this.getSharedPreferences("auto_connect", Context.MODE_PRIVATE);
+            String email = sp.getString("email", null);
+            String pass = sp.getString("password", null);
+            String date = sp.getString("date", null);
+
+            Toast.makeText(getApplicationContext(),"EMAIL : " + email+ "\n PASS : " + pass + "\n DATE : " + date, Toast.LENGTH_SHORT ).show();
+            if(email != null && pass != null){
+                CommunicationWebservice.getINSTANCE().connect(email, pass, this, true);
+            }
+        }
     }
 }

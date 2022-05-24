@@ -3,7 +3,6 @@ package fr.flareden.meetingcar.metier;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.OpenableColumns;
@@ -16,40 +15,37 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
-import fr.flareden.meetingcar.metier.entity.Visite;
 import fr.flareden.meetingcar.metier.entity.client.Client;
+import fr.flareden.meetingcar.metier.entity.messagerie.Discussion;
+import fr.flareden.meetingcar.metier.entity.messagerie.Message;
 import fr.flareden.meetingcar.metier.listener.IAnnonceCreatedHandler;
 import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
-import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
 import fr.flareden.meetingcar.metier.listener.IClientLoadingHandler;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
+import fr.flareden.meetingcar.metier.listener.IDiscussionCreatedHandler;
 import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
 import fr.flareden.meetingcar.metier.listener.IListAnnonceLoaderHandler;
+import fr.flareden.meetingcar.metier.listener.IMessageHandler;
+import fr.flareden.meetingcar.metier.listener.IMessageNotRead;
+import fr.flareden.meetingcar.metier.listener.IDiscussionReceiveHandler;
 import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
 
 public class CommunicationWebservice {
@@ -640,19 +636,113 @@ public class CommunicationWebservice {
 
     public void addVisite(@NonNull Annonce a, Client c) {
         new Thread(() -> {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
-            String horodatage = sdf.format(Calendar.getInstance().getTime());
+
+        }).start();
+    }
+
+    // --- FIN ARTICLES ---
+
+    // --- MESSAGERIE ---
+
+    public void getDiscussions(int page, IDiscussionReceiveHandler callback){
+        new Thread(() -> {
+            int id = -1;
+            ArrayList<Discussion> liste = new ArrayList<>();
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/addVisite/" + a.getId()).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/all/" + page).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
 
-                JSONObject send = new JSONObject();
+                connection.setRequestProperty("authorization", token);
 
-                send.put("client", (c == null ? null : c.getId()));
-                send.put("horodatage", horodatage);
-                send.put("localisation", (c == null ? null : c.getAdresse()));
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null){
+                        sb.append(line);
+                    }
+                    JSONObject json = new JSONObject(sb.toString().trim());
+                    JSONArray array = json.optJSONArray("result");
+                    if (array != null) {
+                        for (int i = 0, max = array.length(); i < max; i++) {
+                            liste.add(Discussion.fromJsonObject(array.getJSONObject(i)));
+                        }
+                    }
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if(callback != null){
+                callback.onDiscussionReceive(liste);
+            }
+
+        }).start();
+    }
+
+    public void getMessages(Discussion d, int page, IMessageHandler callback){
+        new Thread(() -> {
+            int id = -1;
+            ArrayList<Message> liste = new ArrayList<>();
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/one/" + d.getId() + "/messages/" + page).openConnection();
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("POST");
+
+                connection.setRequestProperty("authorization", token);
+
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null){
+                        sb.append(line);
+                    }
+                    JSONObject json = new JSONObject(sb.toString().trim());
+                    JSONArray array = json.optJSONArray("result");
+                    if (array != null) {
+                        for (int i = 0, max = array.length(); i < max; i++) {
+                            liste.add(Message.fromJsonObject(array.getJSONObject(i), d));
+                        }
+                    }
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if(callback != null){
+                callback.onMessagesReceive(d, liste);
+            }
+
+        }).start();
+    }
+
+    public void sendMessage(Discussion d, Message message, Uri image, IMessageHandler callback, ContentResolver resolver){
+        new Thread(() -> {
+            int id = -1;
+            int image_id = -1;
+            try {
+                if(image != null){
+                    image_id =  uploadImage(image, resolver);
+                }
+
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/one/" + d.getId() + "/sendMessage").openConnection();
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("POST");
+
+                connection.setRequestProperty("authorization", token);
+
+                JSONObject send = message.toJsonObject();
+
+                send.put("image_id", image_id);
 
                 try (OutputStream out = connection.getOutputStream()) {
                     out.write(send.toString().getBytes(StandardCharsets.UTF_8));
@@ -660,28 +750,102 @@ public class CommunicationWebservice {
                 }
 
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
-                    JSONObject obj = new JSONObject(in.readLine());
-                    int id = obj.optInt("id", -1);
-                    if(id >= 0){
-                        a.addVisite(new Visite(id, c, horodatage));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null){
+                        sb.append(line);
                     }
+                    System.out.println("DATA : " + sb.toString());
+                    JSONObject obj = new JSONObject(sb.toString().trim());
+
+                    id = obj.optInt("id", -1 );
+
                 }
-            } catch (ProtocolException e) {
-                e.printStackTrace();
+
             } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
+            }
+
+            if(id != -1){
+                message.setId(id);
+                message.getImage().setId(image_id);
+                if(callback != null){
+                    callback.onMessageSend(d, message);
+                }
+            }
+        }).start();
+    }
+
+    void isMessageNotRead(String horodatage, IMessageNotRead callback){
+        new Thread(() -> {
+            int nb = 0;
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "/").openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestProperty("authorization", token);
+                connection.setRequestMethod("GET");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    String str = in.readLine();
+                    JSONObject obj = new JSONObject(str);
+                    nb = obj.getInt("nb_not_read");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-        });
+            callback.numberMessageNotRead(nb);
+        }).start();
     }
 
-    // --- FIN ARTICLES ---
+    void createDiscussion(Discussion d, IDiscussionCreatedHandler callback){
+        new Thread(() -> {
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/create").openConnection();
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("POST");
+
+                connection.setRequestProperty("authorization", token);
+
+                JSONObject send = d.toJsonObject();
+
+                try (OutputStream out = connection.getOutputStream()) {
+                    out.write(send.toString().getBytes(StandardCharsets.UTF_8));
+                    out.flush();
+                }
+
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null){
+                        sb.append(line);
+                    }
+                    JSONObject obj = new JSONObject(sb.toString().trim());
+
+                    d.setId(obj.optInt("id", -1 ));
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if(callback != null){
+                callback.onDiscussionCreated(d);
+            }
+
+        }).start();
+    }
+
+    // --- FIN MESSAGERIE ---
 
     // --- CRYPTAGE ---
 

@@ -1,16 +1,20 @@
 package fr.flareden.meetingcar.metier.entity.messagerie;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import fr.flareden.meetingcar.metier.entity.Image;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 
 public class Message {
     private int id;
     private String contenu;
-    private String image; //Verify how Android work
+    private Image image; //Verify how Android work
     private Client expediteur;
     private Discussion discussion;
     private String horodatage;
 
-    public Message(int id, String contenu, String image, Client expediteur, Discussion discussion, String horodatage) {
+    public Message(int id, String contenu, Image image, Client expediteur, Discussion discussion, String horodatage) {
         this.id = id;
         this.contenu = contenu;
         this.image = image;
@@ -19,7 +23,7 @@ public class Message {
         this.horodatage = horodatage;
     }
 
-    public Message(String contenu, String image, Client expediteur, String horodatage) {
+    public Message(String contenu, Image image, Client expediteur, String horodatage) {
         this.contenu = contenu;
         this.image = image;
         this.expediteur = expediteur;
@@ -32,6 +36,7 @@ public class Message {
         this.discussion = discussion;
         this.horodatage = horodatage;
     }
+
 
     public int getId() {
         return id;
@@ -49,11 +54,11 @@ public class Message {
         this.contenu = contenu;
     }
 
-    public String getImage() {
+    public Image getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(Image image) {
         this.image = image;
     }
 
@@ -79,5 +84,34 @@ public class Message {
 
     public void setHorodatage(String horodatage) {
         this.horodatage = horodatage;
+    }
+
+
+
+    public static Message fromJsonObject(JSONObject json, Discussion d) throws JSONException {
+        //    public Message(int id, String contenu, String image, Client expediteur, Discussion discussion, String horodatage) {
+        if(d.getId() == json.getInt("id_discussion")){
+            return new Message(
+                    json.getInt("id"),
+                    json.getString("contenu"),
+                    new Image(json.optInt("id_image", -1)),
+                    new Client(json.getInt("id_expediteur")),
+                    d,
+                    json.getString("horodatage")
+                );
+        }
+        return null;
+
+    }
+
+    public JSONObject toJsonObject() throws JSONException {
+        JSONObject result = new JSONObject();
+        result.put("id", this.id);
+        result.put("contenu", this.contenu);
+        result.put("id_image", (this.image != null ? this.image.getId() : -1));
+        result.put("id_expediteur",this.expediteur.getId());
+        result.put("id_discussion", this.discussion.getId());
+        result.put("horodatage", this.horodatage);
+        return result;
     }
 }

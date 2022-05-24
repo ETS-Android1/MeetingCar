@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 
 public class Annonce {
+    private boolean minimal;
     private int id;
     private String title;
     private String desc;
@@ -37,7 +38,15 @@ public class Annonce {
         this.visites = visites;
         this.location = location;
         this.renforcer = renforcer;
+        this.minimal = false;
     }
+
+    public Annonce(int id, String title) {
+        this.id = id;
+        this.title = title;
+        this.minimal = true;
+    }
+
 
     public static Annonce fromJsonObject(JSONObject json) throws JSONException {
         Client vendeur = new Client(json.getInt("vendeur"), json.getString("vendeur_nom"), json.optString("vendeur_prenom", ""), new Image(json.optInt("vendeur_photo", -1)));

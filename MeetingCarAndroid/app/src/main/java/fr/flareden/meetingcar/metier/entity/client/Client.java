@@ -49,10 +49,15 @@ public class Client {
         this.image = null;
 
         this.communications = null;
+
     }
 
     public Client() {
     }
+    public Client(int id) {
+        this.id = id;
+    }
+
 
     public Client(int id, String nom, String prenom, Image image) {
         this.id = id;
@@ -61,6 +66,7 @@ public class Client {
         this.image = image;
         this.communications = null;
     }
+
 
     public void addMoyenCommunication(MoyenCommunication com){
         if(this.communications == null){

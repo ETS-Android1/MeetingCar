@@ -24,18 +24,17 @@ import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
-import fr.flareden.meetingcar.metier.listener.IListAnnonceLoaderHandler;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
 
     // RECYCLER VIEW
-    private RecyclerView recycler;
-    protected AdvertAdapter adapter;
+    protected RecyclerView recycler;
+    protected SpecialAdapter adapter;
     private SearchView search;
 
-    protected ArrayList<AdvertViewModel> data = new ArrayList<>();;
+    protected ArrayList<IViewModel> data = new ArrayList<>();;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -50,38 +49,12 @@ public class HomeFragment extends Fragment {
 
         // RECYCLER VIEW INIT
         recycler = binding.rvAnnounce;
-        adapter = new AdvertAdapter(data);
+        adapter = this.generateAdapter();
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity(), LinearLayoutManager.VERTICAL, false));
 
-        // GESTURE
-        GestureDetector gd = new GestureDetector(this.getActivity(), new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                return true;
-            }
-        });
-        Fragment self = this;
-        // LISTENER RECYCLER
-        recycler.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                View child = rv.findChildViewUnder(e.getX(), e.getY());
-                boolean touch = gd.onTouchEvent(e);
-                if (child != null && touch) {
-                    int pos = rv.getChildAdapterPosition(child);
-                    AdvertViewModel avm = data.get(pos);
-
-                    Bundle b = new Bundle();
-                    b.putInt("idAnnonce", avm.getId());
-                    NavController navController = NavHostFragment.findNavController(self);
-                    navController.popBackStack();
-                    navController.navigate(R.id.nav_annonce, b);
-                    return true;
-                }
-                return false;
-            }
-        });
+        //AddTouchListener
+        touchListener();
 
         // SEARCH
         search = binding.searchAnnounce;
@@ -127,6 +100,41 @@ public class HomeFragment extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    protected SpecialAdapter generateAdapter(){
+        return new SpecialAdapter(data, SpecialAdapter.Type.Advert);
+    }
+
+    protected void touchListener(){
+        // GESTURE
+        GestureDetector gd = new GestureDetector(this.getActivity(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+        });
+        Fragment self = this;
+        // LISTENER RECYCLER
+        recycler.addOnItemTouchListener(new RecyclerView.SimpleOnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                View child = rv.findChildViewUnder(e.getX(), e.getY());
+                boolean touch = gd.onTouchEvent(e);
+                if (child != null && touch) {
+                    int pos = rv.getChildAdapterPosition(child);
+                    AdvertViewModel avm = (AdvertViewModel) data.get(pos);
+
+                    Bundle b = new Bundle();
+                    b.putInt("idAnnonce", avm.getId());
+                    NavController navController = NavHostFragment.findNavController(self);
+                    navController.popBackStack();
+                    navController.navigate(R.id.nav_annonce, b);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

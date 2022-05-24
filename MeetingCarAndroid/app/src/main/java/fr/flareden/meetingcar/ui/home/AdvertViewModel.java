@@ -2,7 +2,7 @@ package fr.flareden.meetingcar.ui.home;
 
 import fr.flareden.meetingcar.metier.entity.Annonce;
 
-public class AdvertViewModel {
+public class AdvertViewModel implements IViewModel{
 
     public enum TYPE {
         RENT,
@@ -24,7 +24,7 @@ public class AdvertViewModel {
         this.price = price;
         this.type = type;
     }
-    AdvertViewModel(Annonce annonce){
+    public AdvertViewModel(Annonce annonce){
 
     }
 
@@ -76,6 +76,7 @@ public class AdvertViewModel {
     }
 
     // SEARCH
+    @Override
     public String getSearchString() {
         return this.title + " " + this.desc + " " + this.loc;
     }
