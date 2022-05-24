@@ -23,7 +23,7 @@ import fr.flareden.meetingcar.metier.listener.IMessageHandler;
 import fr.flareden.meetingcar.ui.home.IViewModel;
 import fr.flareden.meetingcar.ui.home.SpecialAdapter;
 
-public class DiscussionFragment extends Fragment {
+public class DiscussionFragment extends Fragment implements IMessageHandler{
 
     protected FragmentDiscussionBinding binding;
 
@@ -72,19 +72,27 @@ public class DiscussionFragment extends Fragment {
 
     protected void queryData(Discussion d) {
         if (d != null) {
-            CommunicationWebservice.getINSTANCE().getMessages(d, 0, new IMessageHandler() {
-                @Override
-                public void onMessagesReceive(Discussion d, ArrayList<Message> messages) {
-                    for (Message m : messages) {
-                        data.add(new MessageViewModel(m));
-                    }
-                }
-
-                @Override
-                public void onMessageSend(Discussion d, Message s) {
-                    data.add(new MessageViewModel(s));
-                }
-            });
+            CommunicationWebservice.getINSTANCE().getMessages(d, 0, this);
         }
+    }
+
+    @Override
+    public void onMessagesReceive(Discussion d, ArrayList<Message> messages) {
+        for (Message m : messages) {
+            MessageViewModel mvm = new MessageViewModel(m);
+            data.add(mvm);
+
+        }
+        getActivity().runOnUiThread(() -> {
+            adapter.notifyDataSetChanged();
+        });
+    }
+
+    @Override
+    public void onMessageSend(Discussion d, Message s) {
+        data.add(new MessageViewModel(s));
+        getActivity().runOnUiThread(() -> {
+            adapter.notifyDataSetChanged();
+        });
     }
 }

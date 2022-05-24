@@ -68,7 +68,7 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
                 break;
 
             case Message:
-                // v = ....
+                v = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.msg_recyclerview, parent, false));
                 break;
         }
         return v;
@@ -87,11 +87,10 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
             MailViewModel mvm = (MailViewModel) data.get(position);
             holder.tv_title.setText(mvm.getTitle());
             holder.tv_name_contact.setText(mvm.getContactName());
-            //TODO
         } else if (type == Type.Message) {
             MessageViewModel mvm = (MessageViewModel) data.get(position);
-            holder.tv_message.setText(mvm.getContent());
             holder.tv_author.setText(mvm.getAuthor());
+            holder.tv_message.setText(mvm.getContent());
         }
     }
 
@@ -133,7 +132,7 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
             } else if (type == Type.Discussion) {
                 tv_title = itemView.findViewById(R.id.disc_tv_announcetitle);
                 tv_name_contact = itemView.findViewById(R.id.disc_tv_corresp);
-            } else if (type == Type.Discussion) {
+            } else if (type == Type.Message) {
                 tv_author = itemView.findViewById(R.id.msg_tv_author);
                 tv_message = itemView.findViewById(R.id.msg_tv_msg);
             }

@@ -95,7 +95,7 @@ public class Message {
                     json.getInt("id"),
                     json.getString("contenu"),
                     new Image(json.optInt("id_image", -1)),
-                    new Client(json.getInt("id_expediteur")),
+                    new Client(json.getInt("id_expediteur"), json.getString("exped_nom"), json.getString("exped_prenom"), new Image(json.optInt("exped_image",-1))),
                     d,
                     json.getString("horodatage")
                 );

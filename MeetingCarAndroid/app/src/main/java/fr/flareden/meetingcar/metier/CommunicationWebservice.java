@@ -700,6 +700,7 @@ public class CommunicationWebservice {
                     while ((line = in.readLine()) != null){
                         sb.append(line);
                     }
+                    System.out.println("Message : " + sb.toString());
                     JSONObject json = new JSONObject(sb.toString().trim());
                     JSONArray array = json.optJSONArray("result");
                     if (array != null) {

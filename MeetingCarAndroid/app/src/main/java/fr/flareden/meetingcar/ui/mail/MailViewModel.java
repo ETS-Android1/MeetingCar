@@ -37,7 +37,7 @@ public class MailViewModel implements IViewModel {
 
     @Override
     public String getSearchString() {
-        return null;
+        return this.getTitle() + " " + this.getContactName();
     }
 
     public int getId() {

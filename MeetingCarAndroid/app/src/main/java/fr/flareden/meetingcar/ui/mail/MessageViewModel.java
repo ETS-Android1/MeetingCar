@@ -13,14 +13,13 @@ public class MessageViewModel implements IViewModel {
     public String getContent(){
         return message.getContenu();
     }
-    //TODO other getter
 
     public String getAuthor(){
-        return message.getExpediteur().getNom() + (message.getExpediteur().getNom() != null ? " " + message.getExpediteur().getNom() : "");
+        return message.getExpediteur().getNom() + (message.getExpediteur().getPrenom() != null ? " " + message.getExpediteur().getPrenom() : "");
     }
 
     @Override
     public String getSearchString() {
-        return null;
+        return "";
     }
 }
