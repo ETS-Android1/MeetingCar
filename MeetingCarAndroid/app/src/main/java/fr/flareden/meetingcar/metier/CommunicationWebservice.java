@@ -428,9 +428,12 @@ public class CommunicationWebservice {
         new Thread(() -> {
             try {
                 JSONArray array = new JSONArray();
-                for (int i = 0, max = imagesURI.size(); i < max; i++) {
-                    array.put(uploadImage(imagesURI.get(i), resolver));
+                if(imagesURI != null){
+                    for (int i = 0, max = imagesURI.size(); i < max; i++) {
+                        array.put(uploadImage(imagesURI.get(i), resolver));
+                    }
                 }
+
                 ArrayList<Image> photos = (ArrayList<Image>) a.getPhotos().clone();
                 for (Image image : photos) {
                     if (image.isToDelete()) {

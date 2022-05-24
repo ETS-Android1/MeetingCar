@@ -46,7 +46,7 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
 
         // RECYCLER VIEW INIT
         recycler = binding.msgRvListmsg;
-        adapter = new SpecialAdapter(data, SpecialAdapter.Type.Message);
+        adapter = new SpecialAdapter(data, SpecialAdapter.Type.Message, getContext());
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity(), LinearLayoutManager.VERTICAL, false));
 

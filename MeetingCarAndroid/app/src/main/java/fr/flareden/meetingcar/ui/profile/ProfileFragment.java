@@ -35,9 +35,6 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
         binding.profileFabCheck.setOnClickListener((View view) -> checkEditProfile());
         binding.profileFabCancel.setOnClickListener((View view) -> cancelEditProfile());
 
-        // ANNOUNCES LISTENER
-        // TODO : binding.profileBtnAnnounces.setOnClickListener((View view) -> func());
-
         // CURRENT USER && TARGET USER
         Bundle bundle = this.getArguments();
         int userID = (bundle== null ? -1 : bundle.getInt("userID", -1));
@@ -160,8 +157,6 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
             if (birthText.length() > 0) {
                 Metier.getINSTANCE().getUtilisateur().setDatenaissance(birthText);
             }
-
-            // TODO : IMAGE LOAD!
 
             onClientLoad(Metier.getINSTANCE().getUtilisateur(), true);
             cancelEditProfile();

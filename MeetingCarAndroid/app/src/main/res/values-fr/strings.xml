@@ -46,7 +46,8 @@
     <string name="create">Créer</string>
     <string name="title">titre</string>
     <string name="price">Prix</string>
-    <string name="rental">Location</string>
+    <string name="rent">Location</string>
     <string name="announce">Annonce</string>
     <string name="message">Message</string>
+    <string name="sell">Vente</string>
 </resources>

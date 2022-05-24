@@ -1,5 +1,6 @@
 package fr.flareden.meetingcar.ui.home;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,10 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
     private ArrayList<IViewModel> fullData;
     private Filter filter;
     private Type type;
+    private Context context;
 
-    public SpecialAdapter(ArrayList<IViewModel> d, Type type) {
+    public SpecialAdapter(ArrayList<IViewModel> d, Type type, Context context) {
+        this.context = context;
         this.type = type;
         this.data = d;
         this.fullData = new ArrayList<>(d);
@@ -82,7 +85,7 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
             holder.tv_desc.setText(avm.getDesc());
             holder.tv_loc.setText(avm.getLoc());
             holder.tv_price.setText(avm.getPrice());
-            holder.tv_type.setText((avm.getType() == AdvertViewModel.TYPE.RENT ? "RENT" : "SELL"));
+            holder.tv_type.setText((avm.getType() == AdvertViewModel.TYPE.RENT ? context.getResources().getString(R.string.rent) : context.getResources().getString(R.string.sell)));
         } else if (type == Type.Discussion) {
             MailViewModel mvm = (MailViewModel) data.get(position);
             holder.tv_title.setText(mvm.getTitle());

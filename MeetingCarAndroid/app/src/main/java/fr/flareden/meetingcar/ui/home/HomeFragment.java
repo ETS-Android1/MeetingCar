@@ -105,7 +105,7 @@ public class HomeFragment extends Fragment {
     }
 
     protected SpecialAdapter generateAdapter() {
-        return new SpecialAdapter(data, SpecialAdapter.Type.Advert);
+        return new SpecialAdapter(data, SpecialAdapter.Type.Advert, getContext());
     }
 
     protected void touchListener() {

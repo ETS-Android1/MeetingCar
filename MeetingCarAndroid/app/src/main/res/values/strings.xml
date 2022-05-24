@@ -46,7 +46,8 @@
     <string name="create">Create</string>
     <string name="title">Title</string>
     <string name="price">Price</string>
-    <string name="rental">Rental</string>
+    <string name="rent">Rent</string>
     <string name="announce">Annouce</string>
     <string name="message">Message</string>
+    <string name="sell">Sell</string>
 </resources>

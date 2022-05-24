@@ -35,7 +35,7 @@ public class MailFragment extends HomeFragment {
 
     @Override
     protected SpecialAdapter generateAdapter() {
-        return new SpecialAdapter(data, SpecialAdapter.Type.Discussion);
+        return new SpecialAdapter(data, SpecialAdapter.Type.Discussion, getContext());
     }
 
     @Override

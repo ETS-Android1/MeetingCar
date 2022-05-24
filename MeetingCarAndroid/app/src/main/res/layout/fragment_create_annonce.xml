@@ -63,7 +63,7 @@
                 android:id="@+id/cb_create_annonce_rental"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/rental" />
+                android:text="@string/rent" />
 
             <ListView
                 android:id="@+id/lv_create_annonce_list_image"
