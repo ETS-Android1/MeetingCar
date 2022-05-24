@@ -9,7 +9,7 @@ import fr.flareden.meetingcar.metier.entity.client.Client;
 public class Message {
     private int id;
     private String contenu;
-    private Image image; //Verify how Android work
+    private Image image;
     private Client expediteur;
     private Discussion discussion;
     private String horodatage;
@@ -23,14 +23,16 @@ public class Message {
         this.horodatage = horodatage;
     }
 
-    public Message(String contenu, Image image, Client expediteur, String horodatage) {
+    public Message(String contenu, Image image, Client expediteur, String horodatage, Discussion discussion) {
         this.contenu = contenu;
         this.image = image;
         this.expediteur = expediteur;
         this.discussion = discussion;
         this.horodatage = horodatage;
     }
-    public Message(String contenu, Client expediteur, String horodatage) {
+    public Message(String contenu, Client expediteur, String horodatage,Discussion discussion) {
+        this.id = -1;
+        this.image = null;
         this.contenu = contenu;
         this.expediteur = expediteur;
         this.discussion = discussion;

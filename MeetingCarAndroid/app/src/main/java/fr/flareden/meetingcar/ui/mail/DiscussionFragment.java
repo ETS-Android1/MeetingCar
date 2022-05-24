@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import fr.flareden.meetingcar.databinding.FragmentDiscussionBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
@@ -30,6 +32,7 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
     // RECYCLER VIEW
     protected RecyclerView recycler;
     protected SpecialAdapter adapter;
+    protected Discussion discussion;
 
     protected ArrayList<IViewModel> data = new ArrayList<>();
 
@@ -39,9 +42,9 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
 
         data.clear();
 
-        Discussion disc = (Discussion) getArguments().getSerializable("discussion");
-        if (disc != null) {
-            queryData(disc);
+        discussion = (Discussion) getArguments().getSerializable("discussion");
+        if (discussion != null) {
+            queryData(discussion);
         }
 
         // RECYCLER VIEW INIT
@@ -67,6 +70,17 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
             }
         });
 
+        IMessageHandler callback = this;
+        binding.msgButtonSend.setOnClickListener(view -> {
+            String msg = binding.msgEditMessage.getText().toString();
+            if(msg.trim().length() > 0){
+                Date date = new Date(System.currentTimeMillis());
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                Message m = new Message(msg, Metier.getINSTANCE().getUtilisateur(), format.format(date).toString(), discussion);
+                CommunicationWebservice.getINSTANCE().sendMessage(discussion, m, null, callback, getContext().getContentResolver());
+                binding.msgEditMessage.setText("");
+            }
+        });
         return binding.getRoot();
     }
 
@@ -90,6 +104,8 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
 
     @Override
     public void onMessageSend(Discussion d, Message s) {
+        System.out.println("SENDED");
+        System.out.println(s.getContenu());
         data.add(new MessageViewModel(s));
         getActivity().runOnUiThread(() -> {
             adapter.notifyDataSetChanged();
