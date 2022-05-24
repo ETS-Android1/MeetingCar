@@ -510,7 +510,7 @@ public class CommunicationWebservice {
         if (page >= 0) {
 
             new Thread(() -> {
-                ArrayList<Annonce> liste = null;
+                ArrayList<Annonce> liste = new ArrayList<>();
                 try {
                     HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/user/" + idClient + "/" + page).openConnection();
                     connection.setConnectTimeout(2500);
@@ -545,7 +545,7 @@ public class CommunicationWebservice {
         if (page >= 0) {
 
             new Thread(() -> {
-                ArrayList<Annonce> liste = null;
+                ArrayList<Annonce> liste = new ArrayList<>();
                 try {
                     HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/purchased/" + idClient + "/" + page).openConnection();
                     connection.setConnectTimeout(2500);
@@ -700,7 +700,6 @@ public class CommunicationWebservice {
                     while ((line = in.readLine()) != null){
                         sb.append(line);
                     }
-                    System.out.println("Message : " + sb.toString());
                     JSONObject json = new JSONObject(sb.toString().trim());
                     JSONArray array = json.optJSONArray("result");
                     if (array != null) {
