@@ -48,4 +48,5 @@
     <string name="price">Prix</string>
     <string name="rental">Location</string>
     <string name="announce">Annonce</string>
+    <string name="message">Message</string>
 </resources>

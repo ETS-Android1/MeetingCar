@@ -2,26 +2,19 @@ package fr.flareden.meetingcar.ui.mail;
 
 import android.os.Bundle;
 import android.view.GestureDetector;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import fr.flareden.meetingcar.R;
 import fr.flareden.meetingcar.databinding.FragmentHomeBinding;
-import fr.flareden.meetingcar.databinding.FragmentMailBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
-import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.messagerie.Discussion;
-import fr.flareden.meetingcar.ui.home.AdvertViewModel;
 import fr.flareden.meetingcar.ui.home.HomeFragment;
 import fr.flareden.meetingcar.ui.home.SpecialAdapter;
 
@@ -29,12 +22,12 @@ public class MailFragment extends HomeFragment {
     @Override
     protected void queryData(int idClient) {
         System.out.println("QUERY");
-        if(idClient >= 0){
+        if (idClient >= 0) {
             System.out.println("A");
 
             CommunicationWebservice.getINSTANCE().getDiscussions(0, liste -> {
                 System.out.println("Liste : " + liste.size());
-                for(Discussion a : liste){
+                for (Discussion a : liste) {
                     super.data.add(new MailViewModel(a));
                 }
                 getActivity().runOnUiThread(() -> {
@@ -45,11 +38,12 @@ public class MailFragment extends HomeFragment {
     }
 
     @Override
-    protected SpecialAdapter generateAdapter(){
+    protected SpecialAdapter generateAdapter() {
         return new SpecialAdapter(data, SpecialAdapter.Type.Discussion);
     }
+
     @Override
-    protected void touchListener(){
+    protected void touchListener() {
         // GESTURE
         GestureDetector gd = new GestureDetector(this.getActivity(), new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -69,12 +63,12 @@ public class MailFragment extends HomeFragment {
                     MailViewModel mvm = (MailViewModel) data.get(pos);
 
                     Bundle b = new Bundle();
-                    b.putInt("idDiscussion", mvm.getId());
-                    //TODO navigate to nav_discussion
-                    /*NavController navController = NavHostFragment.findNavController(self);
+                    b.putSerializable("discussion", mvm.getDiscussion());
+
+                    NavController navController = NavHostFragment.findNavController(self);
                     navController.popBackStack();
 
-                    navController.navigate(R.id.nav_annonce, b);*/
+                    navController.navigate(R.id.nav_discussion, b);
                     return true;
                 }
                 return false;

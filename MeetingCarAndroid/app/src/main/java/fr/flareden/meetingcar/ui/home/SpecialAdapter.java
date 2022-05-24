@@ -17,16 +17,10 @@ import fr.flareden.meetingcar.ui.mail.MessageViewModel;
 
 public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHolder> implements Filterable {
 
-    public enum Type{
-        Advert,
-        Discussion,
-        Message
-    }
     private ArrayList<IViewModel> data;
     private ArrayList<IViewModel> fullData;
     private Filter filter;
     private Type type;
-
     public SpecialAdapter(ArrayList<IViewModel> d, Type type) {
         this.type = type;
         this.data = d;
@@ -59,58 +53,44 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
         };
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        //Advert & Discussion
-        TextView tv_title;
-        //Advert
-        TextView tv_desc, tv_loc, tv_price, tv_type;
-        //Discussion
-        TextView tv_name_contact;
-        //Message
-        TextView tv_message;
-
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            if(type == Type.Advert){
-                tv_title = itemView.findViewById(R.id.rv_tv_title);
-                tv_desc = itemView.findViewById(R.id.rv_tv_desc);
-                tv_loc = itemView.findViewById(R.id.rv_tv_loc);
-                tv_price = itemView.findViewById(R.id.rv_tv_price);
-                tv_type = itemView.findViewById(R.id.rv_tv_type);
-            } else if (type == Type.Discussion){
-                tv_title = itemView.findViewById(R.id.rv_tv_title);
-                //tv_name_contact = itemView.findViewById(R.id.rv_tv_name_contact);
-            }else if (type == Type.Discussion){
-                //tv_message = itemView.findViewById(R.id.rv_tv_message);
-            }
-
-        }
-    }
-
     @Override
     public SpecialAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ad_recyclerview, parent, false));
+        ViewHolder v = null;
+
+        switch (this.type) {
+            case Advert:
+                v = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ad_recyclerview, parent, false));
+                break;
+
+            case Discussion:
+                v = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.disc_recyclerview, parent, false));
+                break;
+
+            case Message:
+                // v = ....
+                break;
+        }
+        return v;
     }
 
     @Override
     public void onBindViewHolder(SpecialAdapter.ViewHolder holder, int position) {
-        if(type == Type.Advert){
-            AdvertViewModel avm =(AdvertViewModel) data.get(position);
+        if (type == Type.Advert) {
+            AdvertViewModel avm = (AdvertViewModel) data.get(position);
             holder.tv_title.setText(avm.getTitle());
             holder.tv_desc.setText(avm.getDesc());
             holder.tv_loc.setText(avm.getLoc());
             holder.tv_price.setText(avm.getPrice());
             holder.tv_type.setText((avm.getType() == AdvertViewModel.TYPE.RENT ? "RENT" : "SELL"));
-        } else if (type == Type.Discussion){
+        } else if (type == Type.Discussion) {
             MailViewModel mvm = (MailViewModel) data.get(position);
             holder.tv_title.setText(mvm.getTitle());
-            //holder.tv_name_contact.setText(mvm.getContactName());
+            holder.tv_name_contact.setText(mvm.getContactName());
             //TODO
-        } else if (type == Type.Message){
+        } else if (type == Type.Message) {
             MessageViewModel mvm = (MessageViewModel) data.get(position);
-            //holder.tv_message.setText(mvm.getContent());
-            //TODO
+            holder.tv_message.setText(mvm.getContent());
+            holder.tv_author.setText(mvm.getAuthor());
         }
     }
 
@@ -122,5 +102,41 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
     @Override
     public Filter getFilter() {
         return this.filter;
+    }
+
+    public enum Type {
+        Advert,
+        Discussion,
+        Message
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        //Advert & Discussion
+        TextView tv_title;
+        //Advert
+        TextView tv_desc, tv_loc, tv_price, tv_type;
+        //Discussion
+        TextView tv_name_contact;
+        //Message
+        TextView tv_author, tv_message;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            if (type == Type.Advert) {
+                tv_title = itemView.findViewById(R.id.rv_tv_title);
+                tv_desc = itemView.findViewById(R.id.rv_tv_desc);
+                tv_loc = itemView.findViewById(R.id.rv_tv_loc);
+                tv_price = itemView.findViewById(R.id.rv_tv_price);
+                tv_type = itemView.findViewById(R.id.rv_tv_type);
+            } else if (type == Type.Discussion) {
+                tv_title = itemView.findViewById(R.id.disc_tv_announcetitle);
+                tv_name_contact = itemView.findViewById(R.id.disc_tv_corresp);
+            } else if (type == Type.Discussion) {
+                tv_author = itemView.findViewById(R.id.msg_tv_author);
+                tv_message = itemView.findViewById(R.id.msg_tv_msg);
+            }
+
+        }
     }
 }

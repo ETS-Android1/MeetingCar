@@ -15,6 +15,9 @@ public class MessageViewModel implements IViewModel {
     }
     //TODO other getter
 
+    public String getAuthor(){
+        return message.getExpediteur().getNom() + (message.getExpediteur().getNom() != null ? " " + message.getExpediteur().getNom() : "");
+    }
 
     @Override
     public String getSearchString() {

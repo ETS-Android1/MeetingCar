@@ -5,13 +5,14 @@ import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 
-public class Discussion {
+public class Discussion implements Serializable {
     private int id;
     private String expediteurEmail;
     private Client expediteur;

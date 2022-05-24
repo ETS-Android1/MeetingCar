@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.io.Serializable;
+
 import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.messagerie.Discussion;
 import fr.flareden.meetingcar.ui.home.IViewModel;
@@ -40,5 +42,9 @@ public class MailViewModel implements IViewModel {
 
     public int getId() {
         return this.discussion.getId();
+    }
+
+    public Serializable getDiscussion() {
+        return discussion;
     }
 }
