@@ -111,11 +111,11 @@ public class Discussion {
     public static Discussion fromJsonObject(JSONObject json) throws JSONException {
 
         //int id, String title, String desc, float prix, Client vendeur, ArrayList<Image> photos, boolean disponible, Client acheteur, ArrayList<Visite> visites, boolean location, boolean renforcer{
-        Annonce annonce = new Annonce(json.getInt("annonce"), json.getString("annonce_title"));
-        int idExpediteur = json.optInt("expediteur", -1);
+        Annonce annonce = new Annonce(json.getInt("id_annonce"), json.getString("annonce_title"));
+        int idExpediteur = json.optInt("id_expediteur", -1);
         if(idExpediteur >= 0){
             Client expediteur = new Client(idExpediteur, json.getString("exped_nom"), json.optString("exped_prenom", ""), new Image(json.optInt("exped_photo", -1)));
-            Client destinataire = new Client(json.getInt("destinataire"), json.getString("dest_nom"), json.optString("dest_prenom", ""), new Image(json.optInt("dest_photo", -1)));
+            Client destinataire = new Client(json.getInt("id_destinataire"), json.getString("dest_nom"), json.optString("dest_prenom", ""), new Image(json.optInt("dest_photo", -1)));
             return new Discussion(
                     json.getInt("id"),
                     expediteur,
@@ -125,7 +125,7 @@ public class Discussion {
             );
         } else {
             String mailExpediteur = json.getString("mail_expediteur");
-            Client destinataire = new Client(json.getInt("destinataire"), json.getString("dest_nom"), json.optString("dest_prenom", ""), new Image(json.optInt("dest_photo", -1)));
+            Client destinataire = new Client(json.getInt("id_destinataire"), json.getString("dest_nom"), json.optString("dest_prenom", ""), new Image(json.optInt("dest_photo", -1)));
 
             return new Discussion(
                     json.getInt("id"),

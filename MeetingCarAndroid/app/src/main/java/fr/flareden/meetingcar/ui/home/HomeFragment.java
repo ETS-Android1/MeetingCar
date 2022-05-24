@@ -34,17 +34,19 @@ public class HomeFragment extends Fragment {
     protected SpecialAdapter adapter;
     private SearchView search;
 
-    protected ArrayList<IViewModel> data = new ArrayList<>();;
+    protected ArrayList<IViewModel> data = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
         data.clear();
-        if(savedInstanceState != null){
-            queryData(savedInstanceState.getInt("idClient", -1));
-        } else {
+
+        Client c = Metier.getINSTANCE().getUtilisateur();
+        if (c == null) {
             queryData(-1);
+        } else {
+            queryData(c.getId());
         }
 
         // RECYCLER VIEW INIT
@@ -91,7 +93,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void askIsLogin(boolean isLogin) {
-                if(isLogin){
+                if (isLogin) {
                     getActivity().runOnUiThread(() -> {
                         initFab(binding);
                     });
@@ -102,11 +104,11 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
-    protected SpecialAdapter generateAdapter(){
+    protected SpecialAdapter generateAdapter() {
         return new SpecialAdapter(data, SpecialAdapter.Type.Advert);
     }
 
-    protected void touchListener(){
+    protected void touchListener() {
         // GESTURE
         GestureDetector gd = new GestureDetector(this.getActivity(), new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -146,13 +148,13 @@ public class HomeFragment extends Fragment {
 
     protected void queryData(int idClient) {
         CommunicationWebservice.getINSTANCE().getAnnonceListe(0, liste -> {
-            for(Annonce a : liste){
+            for (Annonce a : liste) {
                 this.data.add(new AdvertViewModel(a.getId(),
                         a.getTitle(),
                         a.getDesc(),
                         a.getVendeur().getAdresse(),
-                        ""+a.getPrix(),
-                        (a.isLocation() ? AdvertViewModel.TYPE.RENT : AdvertViewModel.TYPE.SELL) ));
+                        "" + a.getPrix(),
+                        (a.isLocation() ? AdvertViewModel.TYPE.RENT : AdvertViewModel.TYPE.SELL)));
             }
             getActivity().runOnUiThread(() -> {
                 this.adapter.notifyDataSetChanged();

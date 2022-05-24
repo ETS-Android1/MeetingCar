@@ -105,11 +105,11 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
         } else if (type == Type.Discussion){
             MailViewModel mvm = (MailViewModel) data.get(position);
             holder.tv_title.setText(mvm.getTitle());
-            holder.tv_name_contact.setText(mvm.getContactName());
+            //holder.tv_name_contact.setText(mvm.getContactName());
             //TODO
         } else if (type == Type.Message){
             MessageViewModel mvm = (MessageViewModel) data.get(position);
-            holder.tv_message.setText(mvm.getContent());
+            //holder.tv_message.setText(mvm.getContent());
             //TODO
         }
     }

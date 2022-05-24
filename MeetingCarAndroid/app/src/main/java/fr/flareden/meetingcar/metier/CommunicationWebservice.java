@@ -652,7 +652,7 @@ public class CommunicationWebservice {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/all/" + page).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
-                connection.setRequestMethod("POST");
+                connection.setRequestMethod("GET");
 
                 connection.setRequestProperty("authorization", token);
 
@@ -662,6 +662,7 @@ public class CommunicationWebservice {
                     while ((line = in.readLine()) != null){
                         sb.append(line);
                     }
+                    System.out.println("QUERY : " + sb.toString());
                     JSONObject json = new JSONObject(sb.toString().trim());
                     JSONArray array = json.optJSONArray("result");
                     if (array != null) {

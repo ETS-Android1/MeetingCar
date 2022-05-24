@@ -27,9 +27,13 @@ import fr.flareden.meetingcar.ui.home.SpecialAdapter;
 
 public class MailFragment extends HomeFragment {
     @Override
-    protected void queryData(int page) {
-        if(page >= 0){
-            CommunicationWebservice.getINSTANCE().getDiscussions(page, liste -> {
+    protected void queryData(int idClient) {
+        System.out.println("QUERY");
+        if(idClient >= 0){
+            System.out.println("A");
+
+            CommunicationWebservice.getINSTANCE().getDiscussions(0, liste -> {
+                System.out.println("Liste : " + liste.size());
                 for(Discussion a : liste){
                     super.data.add(new MailViewModel(a));
                 }
@@ -39,6 +43,7 @@ public class MailFragment extends HomeFragment {
             });
         }
     }
+
     @Override
     protected SpecialAdapter generateAdapter(){
         return new SpecialAdapter(data, SpecialAdapter.Type.Discussion);

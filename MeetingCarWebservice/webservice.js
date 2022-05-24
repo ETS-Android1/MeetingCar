@@ -42,8 +42,8 @@ var con = mysql.createConnection({
 
 const authenticateJWT = (req, res, next) => {
     const token = req.headers.authorization;
-
     if (token) {
+		
         jwt.verify(token, access.secret, (err, user) => {
             if (err) {
                 return res.sendStatus(403);
@@ -62,84 +62,6 @@ https
     console.log('server is runing at port 9000')
   });
   
-// --- MESSAGERIE ---
-app.get('/discussion/all/:page', authenticateJWT, function(req, res){
-	let page = parseInt(req.params.page);
-	let id = parseInt(req.user.id);
-	if(page >= 0){
-		let limite = 30;
-		con.query("SELECT * FROM discussion WHERE id_expediteur = " + id + " OR id_destinataire = " + id + " LIMIT ? OFFSET ?" , [limite, page*limite], function(err, result){
-			if(err){
-				res.json({error:"SQLError"});
-			} else {
-				res.json(JSON.stringify(result));
-			}
-		});
-	} else {
-		res.json({error:"NaN"});
-	}
-});	 
-
-app.get('/discussion/one/:id/messages/:page',authenticateJWT, function(req, res){
-	let idDiscussion = parseInt(req.params.id);
-	let page = parseInt(req.params.page);
-	let idUser = req.user.id;
-
-	if(idDiscussion >= 0){
-		let limite = 30;
-		con.query("SELECT * FROM message WHERE id_discussion = " + idDiscussion + " AND id_discussion IN (SELECT id FROM discussion WHERE id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ") ORDER BY horodatage DESC OFFSET " + (limite * page) + " LIMIT " + limite , function(err, result){
-			if(err){
-				res.json({error:"SQLError"});
-			} else {
-				res.json(JSON.stringify(result));
-			}
-		});
-	} else {
-		res.json({error:"NaN"});
-	}
-});
-
-app.post('/discussion/create', authenticateJWT, function(req, res){
-	let idUser = req.user.id;
-	let data = req.body;
-	
-	con.query('INSERT INTO discussion SET id_expediteur =  ?, id_destinataire = ?, id_annonce = ?', [idUser, data.id_destinataire, data.id_annonce], function(err, result){
-		if(err) throw err;
-		res.json({id : result.insertId});
-	});		
-});
-
-app.post('/discussion/create/mail', authenticateJWT, function(req, res){
-	let idUser = req.user.id;
-	let data = req.body;
-	
-	con.query('INSERT INTO discussion SET mail_expediteur = ?, id_destinataire = ?, id_annonce = ?', [data.mail_expediteur, data.id_destinataire, data.id_annonce], function(err, result){
-		if(err) throw err;
-		res.json({id : result.insertId});
-	});
-});
-
-
-app.post('/discussion/one/:id/sendMessage', authenticateJWT, function(req,res){
-	let idDiscussion = parseInt(req.params.id);
-
-	let idUser = req.user.id;
-	let data = req.body;
-	if(idDiscussion >= 0){
-		con.query('SELECT id FROM id_discussion WHERE id = ? AND (id_expediteur = ? OR id_destinataire = ?)', [idDiscussion, idUser, idUser], function(err, result){
-			if(err) throw err;
-			if(result.length > 0){
-				con.query('INSERT INTO message (id, contenu, id_image, id_expediteur, id_discussion, horodatage) VALUES (null, ?, ?, ?, ?, ?)', [data.contenu, data.id_image, idUser, idDiscussion, data.horodatage], function(err, result){
-					if(err) throw err;
-					res.json({result : "OK"});
-				});
-			}
-		});
-	} else {
-		res.json({result : "WrongID"});
-	}
-	
-});
 
 // --- IMAGES ---
 app.post('/sendimage', function(req, res){
@@ -161,8 +83,6 @@ app.post('/sendimage', function(req, res){
 		});
 	}
 });
-
-
 
 app.get('/image/:id', function(req,res){
 	let id = parseInt(req.params.id);
@@ -205,6 +125,83 @@ app.get('/removeimage/:id', authenticateJWT,  function(req,res){
 	} else {
 		res.json({error:"NotValid"});
 	}
+});
+
+// --- MESSAGERIE ---
+app.get('/discussion/all/:page', authenticateJWT,  function(req,res){
+	let page = parseInt(req.params.page);
+	let id = req.user.id;
+	if(page >= 0){
+		let limite = 30;
+		con.query("SELECT discussion.*, Ann.titre AS annonce_title, Dest.nom AS dest_nom, Dest.prenom AS dest_prenom, Dest.photo AS dest_photo, Expe.nom AS exped_nom, Expe.prenom AS exped_prenom, Expe.photo AS exped_photo FROM discussion INNER JOIN annonce AS Ann ON Ann.id = id_annonce INNER JOIN client AS Dest ON Dest.id = id_destinataire LEFT JOIN client AS Expe ON Expe.id = id_expediteur WHERE id_expediteur = " + id + " OR id_destinataire = " + id + " LIMIT ? OFFSET ?" , [limite, page*limite], function(err, result){
+			if(err){
+				res.json({error:"SQLError"});
+			} else {
+				res.json({result : result});
+			}
+		});
+	} else {
+		res.json({error:"NaN"});
+	}
+});	 
+app.get('/discussion/one/:id/messages/:page', authenticateJWT,  function(req,res){
+	let idDiscussion = parseInt(req.params.id);
+	let page = parseInt(req.params.page);
+	let idUser = req.user.id;
+
+	if(idDiscussion >= 0){
+		let limite = 30;
+		con.query("SELECT * FROM message WHERE id_discussion = " + idDiscussion + " AND id_discussion IN (SELECT id FROM discussion WHERE id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ") ORDER BY horodatage DESC OFFSET " + (limite * page) + " LIMIT " + limite , function(err, result){
+			if(err){
+				res.json({error:"SQLError"});
+			} else {
+				res.json({result : result});
+			}
+		});
+	} else {
+		res.json({error:"NaN"});
+	}
+});
+
+app.post('/discussion/create', authenticateJWT, function(req, res){
+	let idUser = req.user.id;
+	let data = req.body;
+	
+	con.query('INSERT INTO discussion SET id_expediteur =  ?, id_destinataire = ?, id_annonce = ?', [idUser, data.id_destinataire, data.id_annonce], function(err, result){
+		if(err) throw err;
+		res.json({id : result.insertId});
+	});		
+});
+
+app.post('/discussion/create/mail', authenticateJWT, function(req, res){
+	let idUser = req.user.id;
+	let data = req.body;
+	
+	con.query('INSERT INTO discussion SET mail_expediteur = ?, id_destinataire = ?, id_annonce = ?', [data.mail_expediteur, data.id_destinataire, data.id_annonce], function(err, result){
+		if(err) throw err;
+		res.json({id : result.insertId});
+	});
+});
+
+app.post('/discussion/one/:id/sendMessage', authenticateJWT, function(req,res){
+	let idDiscussion = parseInt(req.params.id);
+
+	let idUser = req.user.id;
+	let data = req.body;
+	if(idDiscussion >= 0){
+		con.query('SELECT id FROM id_discussion WHERE id = ? AND (id_expediteur = ? OR id_destinataire = ?)', [idDiscussion, idUser, idUser], function(err, result){
+			if(err) throw err;
+			if(result.length > 0){
+				con.query('INSERT INTO message (id, contenu, id_image, id_expediteur, id_discussion, horodatage) VALUES (null, ?, ?, ?, ?, ?)', [data.contenu, data.id_image, idUser, idDiscussion, data.horodatage], function(err, result){
+					if(err) throw err;
+					res.json({result : "OK"});
+				});
+			}
+		});
+	} else {
+		res.json({result : "WrongID"});
+	}
+	
 });
 
 
