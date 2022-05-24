@@ -693,7 +693,7 @@ public class CommunicationWebservice {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/one/" + d.getId() + "/messages/" + page).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
-                connection.setRequestMethod("POST");
+                connection.setRequestMethod("GET");
 
                 connection.setRequestProperty("authorization", token);
 
