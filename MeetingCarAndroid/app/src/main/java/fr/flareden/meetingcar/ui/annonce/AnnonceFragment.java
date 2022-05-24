@@ -18,6 +18,7 @@ import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
 import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
+import fr.flareden.meetingcar.ui.home.AdvertViewModel;
 
 public class AnnonceFragment extends Fragment {
     FragmentAnnonceBinding binding;
@@ -43,6 +44,11 @@ public class AnnonceFragment extends Fragment {
                         if(a != null){
                             getActivity().runOnUiThread(() -> {
                                 binding.tvAnnonceTitre.setText(a.getTitle());
+                                binding.tvAnnonceLoc.setText(a.getVendeur().getAdresse());
+                                binding.tvAnnoncePrice.setText(""+ a.getPrix());
+                                binding.tvAnnonceType.setText((a.isLocation() ? "RENT" : "SELL"));
+                                binding.tvAnnonceDesc.setText((a.getDesc()));
+                                
                             });
                         }
                     }
