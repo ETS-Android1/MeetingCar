@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
     // NAVIGATION DRAWER
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-
+    private NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +52,22 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
         // NAVIGATION DRAWER
         setSupportActionBar(binding.appBarMain.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
+        navigationView = binding.navView;
 
         // LOAD NAVIGATION
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_profile, R.id.nav_mail, R.id.nav_follow, R.id.nav_announces, R.id.nav_history, R.id.nav_login, R.id.nav_annonce, R.id.nav_create_announce)
+                R.id.nav_home,
+                R.id.nav_profile,
+                R.id.nav_mail,
+                R.id.nav_follow,
+                R.id.nav_announces,
+                R.id.nav_history,
+                R.id.nav_login,
+                R.id.nav_annonce,
+                R.id.nav_create_announce)
                 .setOpenableLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -82,10 +91,7 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
             }
         });
         Metier.getINSTANCE().addOnClientChange(this);
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -142,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
         binding.navView.getMenu().findItem(R.id.nav_follow).setVisible(visible);
         binding.navView.getMenu().findItem(R.id.nav_announces).setVisible(visible);
         binding.navView.getMenu().findItem(R.id.nav_history).setVisible(visible);
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
 
@@ -155,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
     public void onConnectionSuccess(Client c, String hashedPassword, boolean isAutoConnect) {
         if(isAutoConnect){
             Metier.getINSTANCE().setUtilisateur(c);
-
         }
     }
 
