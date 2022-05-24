@@ -758,8 +758,7 @@ public class CommunicationWebservice {
                     }
                     JSONObject obj = new JSONObject(sb.toString().trim());
 
-                    id = obj.optInt("id", -1 );
-
+                    id = obj.optInt("result", -1 );
                 }
 
             } catch (MalformedURLException e) {
@@ -770,9 +769,12 @@ public class CommunicationWebservice {
                 e.printStackTrace();
             }
 
+
             if(id != -1){
                 message.setId(id);
-                message.getImage().setId(image_id);
+                if(message.getImage() != null){
+                    message.getImage().setId(image_id);
+                }
                 if(callback != null){
                     callback.onMessageSend(d, message);
                 }
