@@ -151,7 +151,7 @@ app.get('/discussion/one/:id/messages/:page', authenticateJWT,  function(req,res
 
 	if(idDiscussion >= 0){
 		let limite = 30;
-			con.query("SELECT * FROM message WHERE id_discussion = " + idDiscussion + " AND id_discussion IN (SELECT id FROM discussion WHERE id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ") ORDER BY horodatage DESC LIMIT " + limite + " OFFSET " + (limite * page) , function(err, result){
+			con.query("SELECT message.*, exped.nom AS exped_nom, exped.prenom AS exped_prenom, exped.photo AS exped_image FROM message LEFT JOIN client AS exped ON exped.id = id_expediteur WHERE id_discussion = " + idDiscussion + " AND id_discussion IN (SELECT id FROM discussion WHERE id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ") ORDER BY horodatage ASC LIMIT " + limite + " OFFSET " + (limite * page) , function(err, result){
 			if(err){
 				res.json({error:"SQLError"});
 			} else {
