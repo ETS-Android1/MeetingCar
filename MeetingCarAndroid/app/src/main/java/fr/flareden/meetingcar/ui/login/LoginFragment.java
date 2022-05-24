@@ -246,12 +246,10 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
 
     @Override
     public void onConnectionSuccess(Client c, String hashedPassword, boolean isAutoConnect) {
-        System.out.println("Connect : Auto ? " + isAutoConnect);
         if (!isAutoConnect) {
             SharedPreferences sp = this.getActivity().getApplicationContext().getSharedPreferences("auto_connect", Context.MODE_PRIVATE);
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             SharedPreferences.Editor editor = sp.edit();
-            System.out.println("EMAIL : " + c.getEmail());
             editor.putString("email", c.getEmail());
             editor.putString("password", hashedPassword);
             editor.putString("date", format.format(Calendar.getInstance().getTime()));

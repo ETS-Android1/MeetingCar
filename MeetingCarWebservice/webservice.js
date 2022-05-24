@@ -148,14 +148,10 @@ app.get('/discussion/one/:id/messages/:page', authenticateJWT,  function(req,res
 	let idDiscussion = parseInt(req.params.id);
 	let page = parseInt(req.params.page);
 	let idUser = req.user.id;
-	
-	console.log("Discussion : " + idDiscussion);
-	console.log("page : " + page);
 
 	if(idDiscussion >= 0){
 		let limite = 30;
-			console.log("SELECT * FROM message WHERE id_discussion = " + idDiscussion + " AND id_discussion IN (SELECT id FROM discussion WHERE id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ") ORDER BY horodatage DESC OFFSET " + (limite * page) + " LIMIT " + limite);
-		con.query("SELECT * FROM message WHERE id_discussion = " + idDiscussion + " AND id_discussion IN (SELECT id FROM discussion WHERE id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ") ORDER BY horodatage DESC LIMIT " + limite + " OFFSET " + (limite * page) , function(err, result){
+			con.query("SELECT * FROM message WHERE id_discussion = " + idDiscussion + " AND id_discussion IN (SELECT id FROM discussion WHERE id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ") ORDER BY horodatage DESC LIMIT " + limite + " OFFSET " + (limite * page) , function(err, result){
 			if(err){
 				res.json({error:"SQLError"});
 			} else {

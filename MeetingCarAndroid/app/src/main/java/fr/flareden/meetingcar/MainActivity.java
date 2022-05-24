@@ -169,14 +169,13 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
 
     @Override
     public void askIsLogin(boolean isLogin) {
-        System.out.println("is Login ? : " + isLogin);
         if(!isLogin){
             SharedPreferences sp = this.getSharedPreferences("auto_connect", Context.MODE_PRIVATE);
             String email = sp.getString("email", null);
             String pass = sp.getString("password", null);
             String date = sp.getString("date", null);
 
-            Toast.makeText(getApplicationContext(),"EMAIL : " + email+ "\n PASS : " + pass + "\n DATE : " + date, Toast.LENGTH_SHORT ).show();
+            //Toast.makeText(getApplicationContext(),"EMAIL : " + email+ "\n PASS : " + pass + "\n DATE : " + date, Toast.LENGTH_SHORT ).show();
             if(email != null && pass != null){
                 CommunicationWebservice.getINSTANCE().connect(email, pass, this, true);
             }
