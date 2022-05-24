@@ -427,49 +427,63 @@ public class CommunicationWebservice {
     public void updateAnnonce(Annonce a, ArrayList<Uri> imagesURI, ContentResolver resolver) {
         new Thread(() -> {
             try {
-                JSONArray array = new JSONArray();
+                /*JSONArray array = new JSONArray();
                 if(imagesURI != null){
                     for (int i = 0, max = imagesURI.size(); i < max; i++) {
                         array.put(uploadImage(imagesURI.get(i), resolver));
                     }
-                }
-
-                ArrayList<Image> photos = (ArrayList<Image>) a.getPhotos().clone();
-                for (Image image : photos) {
-                    if (image.isToDelete()) {
-                        new Thread(() -> {
-                            try {
-                                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "removeimage/" + image.getId()).openConnection();
-                                connection.setConnectTimeout(2500);
-                                connection.setRequestMethod("GET");
-                                connection.setRequestProperty("authorization", token);
-                                try (BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(connection.getInputStream())))) {
-                                    in.readLine();
+                    ArrayList<Image> photos = (ArrayList<Image>) a.getPhotos().clone();
+                    for (Image image : photos) {
+                        if (image.isToDelete()) {
+                            new Thread(() -> {
+                                try {
+                                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "removeimage/" + image.getId()).openConnection();
+                                    connection.setConnectTimeout(2500);
+                                    connection.setRequestMethod("GET");
+                                    connection.setRequestProperty("authorization", token);
+                                    try (BufferedReader in = new BufferedReader(new InputStreamReader(new BufferedInputStream(connection.getInputStream())))) {
+                                        in.readLine();
+                                    }
+                                } catch (ProtocolException e) {
+                                    e.printStackTrace();
+                                } catch (MalformedURLException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (ProtocolException e) {
-                                e.printStackTrace();
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }).start();
-                        a.getPhotos().remove(image);
+                            }).start();
+                            a.getPhotos().remove(image);
+                        }
                     }
-                }
+                }*/
 
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "inscription").openConnection();
+                System.out.println("UPDATE");
+
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/update").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
 
+                connection.setRequestProperty("authorization", token);
+
                 JSONObject send = a.toJsonObject();
-                send.put("images_ids", (Object) array);
+                //send.put("images_ids", (Object) array);
 
                 try (OutputStream out = connection.getOutputStream()) {
                     out.write(send.toString().getBytes(StandardCharsets.UTF_8));
                     out.flush();
                 }
+                System.out.println("WI");
+
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null){
+                        sb.append(line);
+                    }
+                    System.out.println(sb.toString());
+                }
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -758,7 +772,7 @@ public class CommunicationWebservice {
                     }
                     JSONObject obj = new JSONObject(sb.toString().trim());
 
-                    id = obj.optInt("result", -1 );
+                    id = obj.optInt("result", -1);
                 }
 
             } catch (MalformedURLException e) {

@@ -12,6 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.util.ArrayList;
+
 import fr.flareden.meetingcar.R;
 import fr.flareden.meetingcar.databinding.FragmentAnnonceBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
@@ -19,11 +21,14 @@ import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
 import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
+import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
 
-public class AnnonceFragment extends Fragment {
+public class AnnonceFragment extends Fragment implements IImageReceivingHandler {
 
     private FragmentAnnonceBinding binding;
     private Annonce annonce = null;
+
+    private ViewPagerAdapter adapter;
 
     @Nullable
     @Override
@@ -47,6 +52,7 @@ public class AnnonceFragment extends Fragment {
                 navController.popBackStack();
                 navController.navigate(R.id.nav_home);
             } else {
+                IImageReceivingHandler callback = this;
                 CommunicationWebservice.getINSTANCE().getAnnonce(idAnnonce, new IAnnonceLoaderHandler() {
                     @Override
                     public void onAnnonceLoad(Annonce a) {
@@ -59,13 +65,13 @@ public class AnnonceFragment extends Fragment {
                                 binding.tvAnnonceType.setText((a.isLocation() ? getResources().getString(R.string.rent) : getResources().getString(R.string.sell)));
                                 binding.tvAnnonceDesc.setText((a.getDesc()));
 
-                                binding.vpAnnonceImages.setAdapter(new ViewPagerAdapter(
-                                        getContext(),
-                                        new Image[]{
-                                                new Image(0, getResources().getDrawable(R.drawable.ic_launcher_foreground, getActivity().getTheme())),
-                                                new Image(0, getResources().getDrawable(R.drawable.ic_launcher_background, getActivity().getTheme()))
-                                        })
-                                );
+                                for(Image img : a.getPhotos()){
+                                    if(img.getDrawable() == null){
+                                        CommunicationWebservice.getINSTANCE().getImage(img.getId(), callback);
+                                    }
+                                }
+                                adapter = new ViewPagerAdapter(getContext(),new ArrayList<>());
+                                binding.vpAnnonceImages.setAdapter(adapter);
                                 if(Metier.getINSTANCE().getUtilisateur().getId() == annonce.getVendeur().getId()){
                                     binding.announceFabEdit.setVisibility(View.VISIBLE);
                                     binding.butAnnonceFollow.setVisibility(View.GONE);
@@ -165,6 +171,16 @@ public class AnnonceFragment extends Fragment {
             binding.tvAnnoncePrice.setText("" + annonce.getPrix());
             binding.tvAnnonceType.setText((annonce.isLocation() ? getResources().getString(R.string.rent) : getResources().getString(R.string.sell)));
             binding.tvAnnonceDesc.setText((annonce.getDesc()));
+        }
+    }
+
+    @Override
+    public void receiveImage(Image d) {
+        if(d.getDrawable() != null) {
+            getActivity().runOnUiThread(() -> {
+                this.adapter.addImage(d);
+                this.adapter.notifyDataSetChanged();
+            });
         }
     }
 }

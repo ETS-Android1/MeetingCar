@@ -41,6 +41,7 @@ var con = mysql.createConnection({
 
 
 const authenticateJWT = (req, res, next) => {
+	console.log("AUTH");
     const token = req.headers.authorization;
     if (token) {
 		
@@ -148,7 +149,7 @@ app.get('/discussion/one/:id/messages/:page', authenticateJWT,  function(req,res
 	let idDiscussion = parseInt(req.params.id);
 	let page = parseInt(req.params.page);
 	let idUser = req.user.id;
-
+	
 	if(idDiscussion >= 0){
 		let limite = 30;
 			con.query("SELECT message.*, exped.nom AS exped_nom, exped.prenom AS exped_prenom, exped.photo AS exped_image FROM message LEFT JOIN client AS exped ON exped.id = id_expediteur WHERE id_discussion = " + idDiscussion + " AND id_discussion IN (SELECT id FROM discussion WHERE id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ") ORDER BY horodatage ASC LIMIT " + limite + " OFFSET " + (limite * page) , function(err, result){
@@ -188,13 +189,20 @@ app.post('/discussion/one/:id/sendMessage', authenticateJWT, function(req,res){
 
 	let idUser = req.user.id;
 	let data = req.body;
+	
 	if(idDiscussion >= 0){
-		con.query('SELECT id FROM id_discussion WHERE id = ? AND (id_expediteur = ? OR id_destinataire = ?)', [idDiscussion, idUser, idUser], function(err, result){
+		con.query('SELECT id FROM discussion WHERE id = ? AND (id_expediteur = ? OR id_destinataire = ?)', [idDiscussion, idUser, idUser], function(err, result){
 			if(err) throw err;
 			if(result.length > 0){
-				con.query('INSERT INTO message (id, contenu, id_image, id_expediteur, id_discussion, horodatage) VALUES (null, ?, ?, ?, ?, ?)', [data.contenu, data.id_image, idUser, idDiscussion, data.horodatage], function(err, result){
+			let dataVal = [];
+				if(data.id_image >=0){
+					dataVal = [data.contenu, data.id_image, idUser, idDiscussion, data.horodatage];
+				} else {
+					dataVal = [data.contenu, null, idUser, idDiscussion, data.horodatage];
+				}
+				con.query('INSERT INTO message (id, contenu, id_image, id_expediteur, id_discussion, horodatage) VALUES (null, ?, ?, ?, ?, ?)' ,dataVal, function(err, result){
 					if(err) throw err;
-					res.json({result : "OK"});
+					res.json({result : result.insertId});
 				});
 			}
 		});
@@ -314,11 +322,13 @@ app.post('/annonce/create', authenticateJWT , function (req, res) {
 });
 
 app.post('/annonce/update', authenticateJWT , function (req, res) {
+	console.log("UPDATE");
 	let user = req.user;
 	let data = req.body;
+	console.log(data);
 	if(user.id == data.vendeur){
-		con.query('UPDATE annonce SET titre = ? ,description = ? ,prix = ?,vendeur = ?,acheteur = ?,disponible = ?,location = ?,renforcer = ?'
-		, [data.titre, data.description,data.prix,data.vendeur, data.acheteur, data.disponible, data.location, data.renforcer]
+		con.query('UPDATE annonce SET titre = ? ,description = ? ,prix = ?,vendeur = ?,acheteur = ?,disponible = ?,location = ?,renforcer = ? WHERE id = ? ' 
+		, [data.titre, data.description,data.prix,data.vendeur, data.acheteur, data.disponible, data.location, data.renforcer, data.id]
 		, function (err, result) {
 			if(err) throw err;
 			res.json({result : "OK"});
