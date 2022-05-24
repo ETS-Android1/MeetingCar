@@ -21,6 +21,7 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
     private ArrayList<IViewModel> fullData;
     private Filter filter;
     private Type type;
+
     public SpecialAdapter(ArrayList<IViewModel> d, Type type) {
         this.type = type;
         this.data = d;

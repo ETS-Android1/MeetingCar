@@ -13,27 +13,27 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import fr.flareden.meetingcar.R;
 import fr.flareden.meetingcar.databinding.FragmentAnnonceBinding;
-import fr.flareden.meetingcar.databinding.FragmentCreateAnnonceBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
 import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
-import fr.flareden.meetingcar.ui.home.AdvertViewModel;
 
 public class AnnonceFragment extends Fragment {
+
     FragmentAnnonceBinding binding;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentAnnonceBinding.inflate(inflater, container, false);
         Bundle args = this.getArguments();
-        if(args== null){
+        if (args == null) {
             NavController navController = NavHostFragment.findNavController(this);
             navController.popBackStack();
             navController.navigate(R.id.nav_home);
         } else {
             int idAnnonce = args.getInt("idAnnonce", -1);
-            if(idAnnonce < 0){
+            if (idAnnonce < 0) {
                 NavController navController = NavHostFragment.findNavController(this);
                 navController.popBackStack();
                 navController.navigate(R.id.nav_home);
@@ -41,14 +41,22 @@ public class AnnonceFragment extends Fragment {
                 CommunicationWebservice.getINSTANCE().getAnnonce(idAnnonce, new IAnnonceLoaderHandler() {
                     @Override
                     public void onAnnonceLoad(Annonce a) {
-                        if(a != null){
+                        if (a != null) {
                             getActivity().runOnUiThread(() -> {
                                 binding.tvAnnonceTitre.setText(a.getTitle());
                                 binding.tvAnnonceLoc.setText(a.getVendeur().getAdresse());
-                                binding.tvAnnoncePrice.setText(""+ a.getPrix());
+                                binding.tvAnnoncePrice.setText("" + a.getPrix());
                                 binding.tvAnnonceType.setText((a.isLocation() ? "RENT" : "SELL"));
                                 binding.tvAnnonceDesc.setText((a.getDesc()));
-                                
+
+
+                                binding.vpAnnonceImages.setAdapter(new ViewPagerAdapter(
+                                        getContext(),
+                                        new Image[]{
+                                                new Image(0, getResources().getDrawable(R.drawable.ic_launcher_foreground, getActivity().getTheme())),
+                                                new Image(0, getResources().getDrawable(R.drawable.ic_launcher_background, getActivity().getTheme()))
+                                        })
+                                );
                             });
                         }
                     }
