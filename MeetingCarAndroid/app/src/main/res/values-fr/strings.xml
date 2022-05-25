@@ -57,4 +57,5 @@
     <string name="no">Non</string>
     <string name="send">Envoyer</string>
     <string name="message_sent">Message envoyé</string>
+    <string name="statistics">Statistiques</string>
 </resources>

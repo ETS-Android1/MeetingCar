@@ -205,15 +205,28 @@ public class Client {
     }
 //    public Client(int id, String nom, String prenom, String email, String telephone,String adresse, String datenaissance) {
     public static Client fromJsonObject(JSONObject obj) throws JSONException {
-        return new Client(
-                obj.getInt("id"),
-                obj.getString("nom"),
-                obj.optString("prenom", ""),
-                obj.optString("email", ""),
-                obj.optString("telephone", ""),
-                obj.optString("date_naissance", ""),
-                obj.optString("adresse", "")
-        );
+        if(obj.getInt("pro") == 1){
+            //Professionnel(int id, String nom, String prenom, String email, String telephone, String datenaissance,String adresse, boolean abonner) {
+            return new Professionnel( obj.getInt("id"),
+                    obj.getString("nom"),
+                    obj.optString("prenom", ""),
+                    obj.optString("email", ""),
+                    obj.optString("telephone", ""),
+                    obj.optString("date_naissance", ""),
+                    obj.optString("adresse", ""),
+                    obj.getInt("abonner") == 1);
+        } else {
+            return new Particulier(
+                    obj.getInt("id"),
+                    obj.getString("nom"),
+                    obj.optString("prenom", ""),
+                    obj.optString("email", ""),
+                    obj.optString("telephone", ""),
+                    obj.optString("date_naissance", ""),
+                    obj.optString("adresse", "")
+            );
+        }
+
     }
 
     public JSONObject toJsonObject() throws JSONException {

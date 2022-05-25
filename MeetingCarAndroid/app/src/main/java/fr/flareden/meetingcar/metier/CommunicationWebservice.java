@@ -35,6 +35,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
+import fr.flareden.meetingcar.metier.entity.Visite;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.entity.messagerie.Discussion;
 import fr.flareden.meetingcar.metier.entity.messagerie.Message;
@@ -51,6 +52,7 @@ import fr.flareden.meetingcar.metier.listener.IMessageHandler;
 import fr.flareden.meetingcar.metier.listener.IMessageNotRead;
 import fr.flareden.meetingcar.metier.listener.IDiscussionReceiveHandler;
 import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
+import fr.flareden.meetingcar.metier.listener.IVisitesHandler;
 
 public class CommunicationWebservice {
     public static boolean CONNECTED = false;
@@ -137,6 +139,7 @@ public class CommunicationWebservice {
                     while ((line = in.readLine()) != null) {
                         sb.append(line);
                     }
+                    System.out.println("Client : " + sb.toString());
                     try {
                         JSONObject json = new JSONObject(sb.toString().trim());
                         String error = json.optString("error", null);
@@ -672,6 +675,41 @@ public class CommunicationWebservice {
         }).start();
     }
 
+    public void getVisites(@NonNull Annonce a, IVisitesHandler callback) {
+        new Thread(() -> {
+            ArrayList<Visite> liste = new ArrayList<>();
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/getVisites/" + a.getId()).openConnection();
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("authorization", token);
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line = "";
+                    while ((line = in.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    JSONObject json = new JSONObject(sb.toString().trim());
+                    JSONArray array = json.optJSONArray("result");
+                    if (array != null) {
+                        for (int i = 0, max = array.length(); i < max; i++) {
+                            liste.add(Visite.fromJsonObject(array.getJSONObject(i)));
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            callback.onVisitesReceive(liste);
+        }).start();
+
+    }
+
     // --- FIN ARTICLES ---
 
     // --- MESSAGERIE ---
@@ -1029,6 +1067,8 @@ public class CommunicationWebservice {
         }
         return null;
     }
+
+
 
     // --- FIN CRYPTAGE ---
 }

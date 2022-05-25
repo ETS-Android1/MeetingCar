@@ -221,6 +221,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/buy" />
 
+            <Button
+                android:id="@+id/but_annonce_stats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/statistics"
+                android:visibility="gone" />
+
         </LinearLayout>
     </ScrollView>
 

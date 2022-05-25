@@ -63,4 +63,9 @@
         android:id="@+id/nav_discussion"
         android:name="fr.flareden.meetingcar.ui.mail.DiscussionFragment"
         tools:layout="@layout/fragment_discussion" />
+
+    <fragment
+        android:id="@+id/nav_statistique"
+        android:name="fr.flareden.meetingcar.ui.annonce.StatistiqueFragment"
+        tools:layout="@layout/fragment_statistique" />
 </navigation>

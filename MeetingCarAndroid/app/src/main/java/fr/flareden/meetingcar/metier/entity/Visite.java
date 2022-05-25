@@ -1,5 +1,8 @@
 package fr.flareden.meetingcar.metier.entity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import fr.flareden.meetingcar.metier.entity.client.Client;
 
 public class Visite {
@@ -11,6 +14,13 @@ public class Visite {
         this.id = id;
         this.client = client;
         this.horodatage = horodatage;
+    }
+
+    public static Visite fromJsonObject(JSONObject jsonObject) throws JSONException {
+        return new Visite(
+                jsonObject.getInt("id"),
+                null,
+                jsonObject.getString("horodatage"));
     }
 
     public int getId() {

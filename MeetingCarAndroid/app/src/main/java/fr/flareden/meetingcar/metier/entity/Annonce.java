@@ -7,11 +7,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import fr.flareden.meetingcar.metier.entity.client.Client;
 
-public class Annonce {
+public class Annonce implements Serializable {
     private boolean minimal;
     private int id;
     private String title;

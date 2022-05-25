@@ -26,6 +26,7 @@ import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
+import fr.flareden.meetingcar.metier.entity.client.Professionnel;
 import fr.flareden.meetingcar.metier.entity.messagerie.Discussion;
 import fr.flareden.meetingcar.metier.entity.messagerie.Message;
 import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
@@ -99,6 +100,20 @@ public class AnnonceFragment extends Fragment implements IImageReceivingHandler 
                                         binding.butAnnonceFollow.setVisibility(View.GONE);
                                         binding.butAnnonceContactSeller.setVisibility(View.GONE);
                                         binding.butAnnonceBuy.setVisibility(View.GONE);
+                                        if(Metier.getINSTANCE().getUtilisateur().getClass() == Professionnel.class){
+                                            if(((Professionnel)Metier.getINSTANCE().getUtilisateur()).isAbonner()){
+                                                binding.butAnnonceStats.setVisibility(View.VISIBLE);
+                                                binding.butAnnonceStats.setOnClickListener(view -> {
+                                                    Bundle b = new Bundle();
+                                                    b.putSerializable("annonce", annonce);
+
+                                                    NavController navController = NavHostFragment.findNavController(self);
+                                                    navController.popBackStack();
+
+                                                    navController.navigate(R.id.nav_statistique, b);
+                                                });
+                                            }
+                                        }
                                     } else {
                                         CommunicationWebservice.getINSTANCE().addVisite(annonce, Metier.getINSTANCE().getUtilisateur());
                                     }
@@ -308,8 +323,9 @@ public class AnnonceFragment extends Fragment implements IImageReceivingHandler 
 
     @Override
     public void receiveImage(Image d) {
-        if (d.getDrawable() != null) {
+        if (d.getDrawable() != null && this.isVisible()) {
             getActivity().runOnUiThread(() -> {
+
                 this.adapter.addImage(d);
                 this.adapter.notifyDataSetChanged();
             });
