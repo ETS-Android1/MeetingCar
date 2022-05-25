@@ -111,7 +111,7 @@ public class Message {
         result.put("id", this.id);
         result.put("contenu", this.contenu);
         result.put("id_image", (this.image != null ? this.image.getId() : -1));
-        result.put("id_expediteur",this.expediteur.getId());
+        result.put("id_expediteur",(this.expediteur == null ? -1 : this.expediteur.getId()));
         result.put("id_discussion", this.discussion.getId());
         result.put("horodatage", this.horodatage);
         return result;

@@ -27,7 +27,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -41,7 +43,9 @@ import fr.flareden.meetingcar.metier.listener.IAnnonceLoaderHandler;
 import fr.flareden.meetingcar.metier.listener.IClientLoadingHandler;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
 import fr.flareden.meetingcar.metier.listener.IDiscussionCreatedHandler;
+import fr.flareden.meetingcar.metier.listener.IDiscussionExistHandler;
 import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
+import fr.flareden.meetingcar.metier.listener.IIsFollowHandler;
 import fr.flareden.meetingcar.metier.listener.IListAnnonceLoaderHandler;
 import fr.flareden.meetingcar.metier.listener.IMessageHandler;
 import fr.flareden.meetingcar.metier.listener.IMessageNotRead;
@@ -403,12 +407,12 @@ public class CommunicationWebservice {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
                     StringBuilder sb = new StringBuilder();
                     String line;
-                    while ((line = in.readLine()) != null){
+                    while ((line = in.readLine()) != null) {
                         sb.append(line);
                     }
                     JSONObject obj = new JSONObject(sb.toString().trim());
 
-                    id = obj.optInt("id", -1 );
+                    id = obj.optInt("id", -1);
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -417,7 +421,7 @@ public class CommunicationWebservice {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(callback != null){
+            if (callback != null) {
                 callback.onAnnonceCreated(id);
             }
 
@@ -478,7 +482,7 @@ public class CommunicationWebservice {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
                     StringBuilder sb = new StringBuilder();
                     String line;
-                    while ((line = in.readLine()) != null){
+                    while ((line = in.readLine()) != null) {
                         sb.append(line);
                     }
                     System.out.println(sb.toString());
@@ -616,7 +620,7 @@ public class CommunicationWebservice {
     }
 
     public void getAnnonceListe(int page, IListAnnonceLoaderHandler callback) {
-        if(page >= 0) {
+        if (page >= 0) {
             new Thread(() -> {
                 ArrayList<Annonce> liste = new ArrayList<>();
                 try {
@@ -651,7 +655,20 @@ public class CommunicationWebservice {
 
     public void addVisite(@NonNull Annonce a, Client c) {
         new Thread(() -> {
-
+            try {
+                Date date = new Date();
+                SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/visite/" + a.getId() + "/" + format.format(date) + "/" + (c == null ? -1 : c.getId()) ).openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("GET");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    String str = in.readLine();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }).start();
     }
 
@@ -659,7 +676,7 @@ public class CommunicationWebservice {
 
     // --- MESSAGERIE ---
 
-    public void getDiscussions(int page, IDiscussionReceiveHandler callback){
+    public void getDiscussions(int page, IDiscussionReceiveHandler callback) {
         new Thread(() -> {
             int id = -1;
             ArrayList<Discussion> liste = new ArrayList<>();
@@ -674,7 +691,7 @@ public class CommunicationWebservice {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
                     StringBuilder sb = new StringBuilder();
                     String line;
-                    while ((line = in.readLine()) != null){
+                    while ((line = in.readLine()) != null) {
                         sb.append(line);
                     }
                     JSONObject json = new JSONObject(sb.toString().trim());
@@ -692,14 +709,54 @@ public class CommunicationWebservice {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(callback != null){
+            if (callback != null) {
                 callback.onDiscussionReceive(liste);
             }
 
         }).start();
     }
 
-    public void getMessages(Discussion d, int page, IMessageHandler callback){
+    public void getDiscussion(int idDiscussion, IDiscussionReceiveHandler callback) {
+        new Thread(() -> {
+            int id = -1;
+            ArrayList<Discussion> liste = new ArrayList<>();
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/one/" + idDiscussion).openConnection();
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setConnectTimeout(2500);
+                connection.setRequestMethod("GET");
+
+                connection.setRequestProperty("authorization", token);
+
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    JSONObject json = new JSONObject(sb.toString().trim());
+                    JSONArray array = json.optJSONArray("result");
+                    if (array != null) {
+                        for (int i = 0, max = array.length(); i < max; i++) {
+                            liste.add(Discussion.fromJsonObject(array.getJSONObject(i)));
+                        }
+                    }
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (callback != null) {
+                callback.onDiscussionReceive(liste);
+            }
+
+        }).start();
+    }
+
+    public void getMessages(Discussion d, int page, IMessageHandler callback) {
         new Thread(() -> {
             int id = -1;
             ArrayList<Message> liste = new ArrayList<>();
@@ -714,7 +771,7 @@ public class CommunicationWebservice {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
                     StringBuilder sb = new StringBuilder();
                     String line;
-                    while ((line = in.readLine()) != null){
+                    while ((line = in.readLine()) != null) {
                         sb.append(line);
                     }
                     JSONObject json = new JSONObject(sb.toString().trim());
@@ -732,20 +789,20 @@ public class CommunicationWebservice {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(callback != null){
+            if (callback != null) {
                 callback.onMessagesReceive(d, liste);
             }
 
         }).start();
     }
 
-    public void sendMessage(Discussion d, Message message, Uri image, IMessageHandler callback, ContentResolver resolver){
+    public void sendMessage(Discussion d, Message message, Uri image, IMessageHandler callback, ContentResolver resolver) {
         new Thread(() -> {
             int id = -1;
             int image_id = -1;
             try {
-                if(image != null){
-                    image_id =  uploadImage(image, resolver);
+                if (image != null) {
+                    image_id = uploadImage(image, resolver);
                 }
 
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/one/" + d.getId() + "/sendMessage").openConnection();
@@ -767,7 +824,7 @@ public class CommunicationWebservice {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
                     StringBuilder sb = new StringBuilder();
                     String line;
-                    while ((line = in.readLine()) != null){
+                    while ((line = in.readLine()) != null) {
                         sb.append(line);
                     }
                     JSONObject obj = new JSONObject(sb.toString().trim());
@@ -784,19 +841,19 @@ public class CommunicationWebservice {
             }
 
 
-            if(id != -1){
+            if (id != -1) {
                 message.setId(id);
-                if(message.getImage() != null){
+                if (message.getImage() != null) {
                     message.getImage().setId(image_id);
                 }
-                if(callback != null){
+                if (callback != null) {
                     callback.onMessageSend(d, message);
                 }
             }
         }).start();
     }
 
-    void isMessageNotRead(String horodatage, IMessageNotRead callback){
+    void isMessageNotRead(String horodatage, IMessageNotRead callback) {
         new Thread(() -> {
             int nb = 0;
             try {
@@ -820,7 +877,7 @@ public class CommunicationWebservice {
         }).start();
     }
 
-    void createDiscussion(Discussion d, IDiscussionCreatedHandler callback){
+    public void createDiscussion(Discussion d, IDiscussionCreatedHandler callback) {
         new Thread(() -> {
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/create").openConnection();
@@ -840,12 +897,12 @@ public class CommunicationWebservice {
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
                     StringBuilder sb = new StringBuilder();
                     String line;
-                    while ((line = in.readLine()) != null){
+                    while ((line = in.readLine()) != null) {
                         sb.append(line);
                     }
                     JSONObject obj = new JSONObject(sb.toString().trim());
 
-                    d.setId(obj.optInt("id", -1 ));
+                    d.setId(obj.optInt("id", -1));
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
@@ -854,14 +911,106 @@ public class CommunicationWebservice {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            if(callback != null){
+            if (callback != null) {
                 callback.onDiscussionCreated(d);
             }
 
         }).start();
     }
 
+    public void discussionExist(int idAnnonce, IDiscussionExistHandler callback) {
+        new Thread(() -> {
+            int id = -1;
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/exist/" + idAnnonce).openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestProperty("authorization", token);
+                connection.setRequestMethod("GET");
+
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    String str = in.readLine();
+                    JSONObject obj = new JSONObject(str);
+                    id = obj.optInt("id", -1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            callback.discussionExist(id);
+        }).start();
+    }
+
+
     // --- FIN MESSAGERIE ---
+
+    // --- DEBUT FOLLOW ---
+
+    public void isFollowing(int idAnnonce, IIsFollowHandler callback) {
+        new Thread(() -> {
+            boolean following = false;
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "isFollowing/" + idAnnonce).openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestProperty("authorization", token);
+                connection.setRequestMethod("GET");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    String str = in.readLine();
+                    JSONObject obj = new JSONObject(str);
+                    following = obj.getInt("following") == 1;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            callback.isFollowing(following);
+        }).start();
+    }
+
+    public void setFollow(int idAnnonce, boolean follow) {
+        new Thread(() -> {
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + (follow ? "follow/" : "unfollow/") + idAnnonce).openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestProperty("authorization", token);
+                connection.setRequestMethod("GET");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    String str = in.readLine();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    // --- FIN FOLLOW ---
+
+    // --- BUY ---
+
+    public void buy(int idAnnonce) {
+        new Thread(() -> {
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "buy/" + idAnnonce).openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestProperty("authorization", token);
+                connection.setRequestMethod("GET");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    String str = in.readLine();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
 
     // --- CRYPTAGE ---
 

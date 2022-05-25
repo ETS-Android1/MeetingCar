@@ -50,4 +50,11 @@
     <string name="announce">Annonce</string>
     <string name="message">Message</string>
     <string name="sell">Vente</string>
+    <string name="buy">Acheter</string>
+    <string name="unfollow">Ne plus suivre</string>
+    <string name="areyousure">êtes-vous sûr ?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="send">Envoyer</string>
+    <string name="message_sent">Message envoyé</string>
 </resources>
