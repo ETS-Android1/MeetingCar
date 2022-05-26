@@ -186,7 +186,7 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
 
 
         String birthday = binding.tfBirthdayRegister.getEditText().getText().toString().trim();
-        if(birthday.length() == 8) {
+        if(birthday.length() > 0) {
             String[] splitted = birthday.split("/");
             birthday = splitted[2] + splitted[1] + splitted[0];
         }
