@@ -601,6 +601,41 @@ public class CommunicationWebservice {
         }
     }
 
+    public void getAnnoncesFollow(int idClient, int page, @NonNull IListAnnonceLoaderHandler callback) {
+        if (page >= 0) {
+
+            new Thread(() -> {
+                ArrayList<Annonce> liste = new ArrayList<>();
+                try {
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/follow/" + idClient + "/" + page).openConnection();
+                    connection.setConnectTimeout(2500);
+                    connection.setRequestMethod("GET");
+                    try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while ((line = in.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        JSONObject json = new JSONObject(sb.toString().trim());
+                        JSONArray array = json.optJSONArray("result");
+                        if (array != null) {
+                            for (int i = 0, max = array.length(); i < max; i++) {
+                                liste.add(Annonce.fromJsonObject(array.getJSONObject(i)));
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                callback.onListAnnonceLoad(liste);
+            }).start();
+        }
+    }
+
     public void loadImagesAnnonce(@NonNull Annonce a, IAnnonceLoaderHandler callback) {
         for (Image image : a.getPhotos()) {
             if (image.getDrawable() == null) {

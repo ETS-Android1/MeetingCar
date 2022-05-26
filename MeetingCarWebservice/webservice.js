@@ -299,6 +299,25 @@ app.get('/annonce/purchased/:id/:page', function(req, res){
 	}
 });
 
+app.get('/annonce/follow/:id/:page', function(req, res){
+	let idUser = parseInt(req.params.id);
+	let page = parseInt(req.params.page);
+	if(idUser >= 0){
+		let limite = 20;
+		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, V.adresse as vendeur_adresse, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
+		+ " FROM annonce"
+		+ " INNER JOIN client as V ON V.id = annonce.vendeur"
+		+ " LEFT JOIN client as A ON A.id = annonce.acheteur" 
+		+ " LEFT JOIN image_annonce_link ON image_annonce_link.annonce = annonce.id";
+		con.query( sql + ' WHERE annonce.id IN (SELECT id_annonce FROM follow WHERE id_client = ?) GROUP BY annonce.id LIMIT ? OFFSET ? ', [idUser, limite, (page*limite)], function (err, result) {
+			if (err) throw err;
+			res.json({result : result});
+		});
+	}else {
+		res.json({error:"NotValid"});
+	}
+});
+
 
 app.get('/annonce/get/:id', function (req, res) {
 	let idVal = parseInt(req.params.id);
@@ -350,10 +369,8 @@ app.post('/annonce/create', authenticateJWT , function (req, res) {
 });
 
 app.post('/annonce/update', authenticateJWT , function (req, res) {
-	console.log("UPDATE");
 	let user = req.user;
 	let data = req.body;
-	console.log(data);
 	if(user.id == data.vendeur){
 		con.query('UPDATE annonce SET titre = ? ,description = ? ,prix = ?,vendeur = ?,acheteur = ?,disponible = ?,location = ?,renforcer = ? WHERE id = ? ' 
 		, [data.titre, data.description,data.prix,data.vendeur, data.acheteur, data.disponible, data.location, data.renforcer, data.id]

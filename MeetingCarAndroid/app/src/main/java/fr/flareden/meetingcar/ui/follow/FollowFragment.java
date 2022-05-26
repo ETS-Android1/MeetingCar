@@ -16,7 +16,7 @@ public class FollowFragment extends HomeFragment {
     protected void queryData(int idClient) {
         //TODO : for now return history
         if(idClient >= 0){
-            CommunicationWebservice.getINSTANCE().getAnnoncesAcheteur(idClient, 0, liste -> {
+            CommunicationWebservice.getINSTANCE().getAnnoncesFollow(idClient, 0, liste -> {
                 for(Annonce a : liste){
                     super.data.add(new AdvertViewModel(a.getId(), a.getTitle(), a.getDesc(), a.getVendeur().getAdresse(), ""+a.getPrix(), (a.isLocation() ? AdvertViewModel.TYPE.RENT : AdvertViewModel.TYPE.SELL) ));
                 }
