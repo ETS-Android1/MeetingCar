@@ -11,34 +11,33 @@ var express = require('express');
 var app = express();
 var jwt = require('jsonwebtoken');
 
-var privateKey  = fs.readFileSync('/etc/letsencrypt/live/m1.flareden.fr/privkey.pem', 'utf8');
-var certificate = fs.readFileSync('/etc/letsencrypt/live/m1.flareden.fr/fullchain.pem', 'utf8');
-
-var credentials = {key: privateKey, cert: certificate};
-
-const SECRET = 'mykey'
 app.use(bodyParser.json({limit: '200mb'}));
 app.use(bodyParser.urlencoded({ extended: true, limit: '200mb' }))
 
 let access = JSON.parse(fs.readFileSync('access.json'));
-function formatSQL(data){
-	if(data != null){
-		return "'" + data + "'";
-	}
-	return null;
-}
+
+var privateKey  = fs.readFileSync(access.https.privateKey, 'utf8');
+var certificate = fs.readFileSync(access.https.certificate, 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
 var con = mysql.createConnection({
     host: access.host,
     user: access.user,
     password: access.password,
     database: access.database,
     ssl: {
-        ca: fs.readFileSync(__dirname + '/certs/ca.pem'),
-        key: fs.readFileSync(__dirname + '/certs/client-key.pem'),
-        cert: fs.readFileSync(__dirname + '/certs/client-cert.pem')
+        ca: fs.readFileSync(__dirname + access.ssl.ca),
+        key: fs.readFileSync(__dirname + access.ssl.key),
+        cert: fs.readFileSync(__dirname + access.ssl.cert)
     }
 });
 
+function formatSQL(data){
+	if(data != null){
+		return "'" + data + "'";
+	}
+	return null;
+}
 
 const authenticateJWT = (req, res, next) => {
     const token = req.headers.authorization;

@@ -33,6 +33,7 @@ import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import fr.flareden.meetingcar.Config;
 import fr.flareden.meetingcar.metier.entity.Annonce;
 import fr.flareden.meetingcar.metier.entity.Image;
 import fr.flareden.meetingcar.metier.entity.Visite;
@@ -57,7 +58,6 @@ import fr.flareden.meetingcar.metier.listener.IVisitesHandler;
 
 public class CommunicationWebservice {
     public static boolean CONNECTED = false;
-    private static String BASE_URL = "https://www.flareden.fr:9000/";
     private static CommunicationWebservice INSTANCE = null;
     private String token = "";
 
@@ -78,7 +78,7 @@ public class CommunicationWebservice {
             try {
                 int imageID = uploadImage(imageURI, resolver);
 
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "inscription").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "inscription").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
@@ -127,7 +127,7 @@ public class CommunicationWebservice {
             }
             try {
 
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "connection").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "connection").openConnection();
                 connection.setConnectTimeout(2500);
 
                 connection.setRequestProperty("username", username);
@@ -152,7 +152,7 @@ public class CommunicationWebservice {
                             int idImage = json.getJSONObject("user").optInt("photo", -1);
                             //ASK IMAGE
                             if (idImage >= 0) {
-                                HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "image/" + idImage).openConnection();
+                                HttpsURLConnection conn = (HttpsURLConnection) new URL(Config.BASE_URL + "image/" + idImage).openConnection();
                                 conn.setConnectTimeout(2500);
                                 conn.setRequestMethod("GET");
                                 try (InputStream in2 = conn.getInputStream()) {
@@ -196,7 +196,7 @@ public class CommunicationWebservice {
             new Thread(() -> {
                 boolean reponse = false;
                 try {
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "isLogin").openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "isLogin").openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestProperty("authorization", token);
                     connection.setRequestMethod("GET");
@@ -229,7 +229,7 @@ public class CommunicationWebservice {
                 if (imageURI != null) {
                     imageID = uploadImage(imageURI, resolver);
                 }
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "update/client").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "update/client").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
@@ -248,7 +248,7 @@ public class CommunicationWebservice {
                 }
 
                 if (imageID >= 0) {
-                    HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "image/" + imageID).openConnection();
+                    HttpsURLConnection conn = (HttpsURLConnection) new URL(Config.BASE_URL + "image/" + imageID).openConnection();
                     conn.setConnectTimeout(2500);
                     try (InputStream in = conn.getInputStream()) {
 
@@ -271,7 +271,7 @@ public class CommunicationWebservice {
         new Thread(() -> {
             Client retour = null;
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "client/" + id).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "client/" + id).openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("GET");
 
@@ -288,7 +288,7 @@ public class CommunicationWebservice {
                         int idImage = json.getInt("photo");
                         //ASK IMAGE
                         if (idImage >= 0) {
-                            HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "image/" + idImage).openConnection();
+                            HttpsURLConnection conn = (HttpsURLConnection) new URL(Config.BASE_URL + "image/" + idImage).openConnection();
                             conn.setConnectTimeout(2500);
                             conn.setRequestMethod("GET");
                             try (InputStream in2 = conn.getInputStream()) {
@@ -319,7 +319,7 @@ public class CommunicationWebservice {
             new Thread(() -> {
                 Image image = null;
                 try {
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "image/" + id).openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "image/" + id).openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestMethod("GET");
                     try (InputStream in = connection.getInputStream()) {
@@ -358,7 +358,7 @@ public class CommunicationWebservice {
             }
 
             if (imageType.trim().length() > 0 && imageData.length > 0) {
-                HttpsURLConnection conn = (HttpsURLConnection) new URL(BASE_URL + "sendimage").openConnection();
+                HttpsURLConnection conn = (HttpsURLConnection) new URL(Config.BASE_URL + "sendimage").openConnection();
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setConnectTimeout(2500);
                 conn.setRequestMethod("POST");
@@ -392,7 +392,7 @@ public class CommunicationWebservice {
                     array.put(uploadImage(imagesURI.get(i), resolver));
                 }
 
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/create").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/create").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
@@ -445,7 +445,7 @@ public class CommunicationWebservice {
                         if (image.isToDelete()) {
                             new Thread(() -> {
                                 try {
-                                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "removeimage/" + image.getId()).openConnection();
+                                    HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "removeimage/" + image.getId()).openConnection();
                                     connection.setConnectTimeout(2500);
                                     connection.setRequestMethod("GET");
                                     connection.setRequestProperty("authorization", token);
@@ -467,7 +467,7 @@ public class CommunicationWebservice {
 
                 System.out.println("UPDATE");
 
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/update").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/update").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
@@ -507,7 +507,7 @@ public class CommunicationWebservice {
             new Thread(() -> {
                 Annonce retour = null;
                 try {
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/get/" + idAnnonce).openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/get/" + idAnnonce).openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestMethod("GET");
                     try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
@@ -537,7 +537,7 @@ public class CommunicationWebservice {
             new Thread(() -> {
                 ArrayList<Annonce> liste = new ArrayList<>();
                 try {
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/user/" + idClient + "/" + page).openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/user/" + idClient + "/" + page).openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestMethod("GET");
                     try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
@@ -572,7 +572,7 @@ public class CommunicationWebservice {
             new Thread(() -> {
                 ArrayList<Annonce> liste = new ArrayList<>();
                 try {
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/purchased/" + idClient + "/" + page).openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/purchased/" + idClient + "/" + page).openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestMethod("GET");
                     try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
@@ -606,7 +606,7 @@ public class CommunicationWebservice {
             if (image.getDrawable() == null) {
                 new Thread(() -> {
                     try {
-                        HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "image/" + image.getId()).openConnection();
+                        HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "image/" + image.getId()).openConnection();
                         connection.setConnectTimeout(2500);
                         connection.setRequestMethod("GET");
                         try (InputStream in = connection.getInputStream()) {
@@ -628,7 +628,7 @@ public class CommunicationWebservice {
             new Thread(() -> {
                 ArrayList<Annonce> liste = new ArrayList<>();
                 try {
-                    HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/page/" + page).openConnection();
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/page/" + page).openConnection();
                     connection.setConnectTimeout(2500);
                     connection.setRequestMethod("GET");
                     try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
@@ -662,7 +662,7 @@ public class CommunicationWebservice {
             try {
                 Date date = new Date();
                 SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/visite/" + a.getId() + "/" + format.format(date) + "/" + (c == null ? -1 : c.getId()) ).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/visite/" + a.getId() + "/" + format.format(date) + "/" + (c == null ? -1 : c.getId()) ).openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("GET");
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
@@ -680,7 +680,7 @@ public class CommunicationWebservice {
         new Thread(() -> {
             ArrayList<Visite> liste = new ArrayList<>();
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "annonce/getVisites/" + a.getId()).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "annonce/getVisites/" + a.getId()).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("GET");
@@ -720,7 +720,7 @@ public class CommunicationWebservice {
             int id = -1;
             ArrayList<Discussion> liste = new ArrayList<>();
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/all/" + page).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "discussion/all/" + page).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("GET");
@@ -760,7 +760,7 @@ public class CommunicationWebservice {
             int id = -1;
             ArrayList<Discussion> liste = new ArrayList<>();
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/one/" + idDiscussion).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "discussion/one/" + idDiscussion).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("GET");
@@ -800,7 +800,7 @@ public class CommunicationWebservice {
             int id = -1;
             ArrayList<Message> liste = new ArrayList<>();
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/one/" + d.getId() + "/messages/" + page).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "discussion/one/" + d.getId() + "/messages/" + page).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("GET");
@@ -844,7 +844,7 @@ public class CommunicationWebservice {
                     image_id = uploadImage(image, resolver);
                 }
 
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/one/" + d.getId() + "/sendMessage").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "discussion/one/" + d.getId() + "/sendMessage").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
@@ -896,7 +896,7 @@ public class CommunicationWebservice {
         new Thread(() -> {
             int nb = 0;
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "/").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "/").openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestProperty("authorization", token);
                 connection.setRequestMethod("GET");
@@ -919,7 +919,7 @@ public class CommunicationWebservice {
     public void createDiscussion(Discussion d, IDiscussionCreatedHandler callback) {
         new Thread(() -> {
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/create").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "discussion/create").openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");
@@ -961,7 +961,7 @@ public class CommunicationWebservice {
         new Thread(() -> {
             int id = -1;
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "discussion/exist/" + idAnnonce).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "discussion/exist/" + idAnnonce).openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestProperty("authorization", token);
                 connection.setRequestMethod("GET");
@@ -991,7 +991,7 @@ public class CommunicationWebservice {
         new Thread(() -> {
             boolean following = false;
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "isFollowing/" + idAnnonce).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "isFollowing/" + idAnnonce).openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestProperty("authorization", token);
                 connection.setRequestMethod("GET");
@@ -1014,7 +1014,7 @@ public class CommunicationWebservice {
     public void setFollow(int idAnnonce, boolean follow) {
         new Thread(() -> {
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + (follow ? "follow/" : "unfollow/") + idAnnonce).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + (follow ? "follow/" : "unfollow/") + idAnnonce).openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestProperty("authorization", token);
                 connection.setRequestMethod("GET");
@@ -1036,7 +1036,7 @@ public class CommunicationWebservice {
     public void buy(int idAnnonce) {
         new Thread(() -> {
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "buy/" + idAnnonce).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "buy/" + idAnnonce).openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestProperty("authorization", token);
                 connection.setRequestMethod("GET");
@@ -1056,7 +1056,7 @@ public class CommunicationWebservice {
     public void subscribeProPlus(){
         new Thread(() -> {
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "subscribe/").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "subscribe/").openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestProperty("authorization", token);
                 connection.setRequestMethod("GET");
@@ -1074,7 +1074,7 @@ public class CommunicationWebservice {
     public void unSubscribeProPlus(){
         new Thread(() -> {
             try {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "unsubscribe/").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "unsubscribe/").openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestProperty("authorization", token);
                 connection.setRequestMethod("GET");
