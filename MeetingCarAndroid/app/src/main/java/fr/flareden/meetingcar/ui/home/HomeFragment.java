@@ -69,7 +69,11 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                return false;
+                if(s.length() == 0){
+                    adapter.setDataAffichage();
+                    adapter.notifyDataSetChanged();
+                }
+                return true;
             }
         });
 
