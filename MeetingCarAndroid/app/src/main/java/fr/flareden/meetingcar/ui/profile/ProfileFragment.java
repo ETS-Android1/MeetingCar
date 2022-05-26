@@ -184,6 +184,14 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
                 binding.profileFabEdit.setVisibility(View.VISIBLE);
                 isSelf = true;
             }
+            if(c.getImage() != null && c.getImage().getId() >= 0){
+                CommunicationWebservice.getINSTANCE().getImage( c.getImage().getId(), img -> {
+                    c.setImage(img);
+                    getActivity().runOnUiThread(() -> {
+                        binding.profileImage.setImageDrawable(img.getDrawable());
+                    });
+                });
+            }
         });
     }
 }
