@@ -27,20 +27,27 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
     public SpecialAdapter(ArrayList<IViewModel> d, Type type, Context context) {
         this.context = context;
         this.type = type;
-        this.data = d;
-        this.fullData = new ArrayList<>(d);
+        System.out.println("Size FD: " + d.size());
+        this.fullData = d;
+        this.data = new ArrayList<>(d);
+
         this.filter = new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
                 ArrayList<IViewModel> filteredList = new ArrayList<>();
+                System.out.println(fullData.size());
                 if (charSequence == null || charSequence.length() == 0) {
                     filteredList.addAll(fullData);
                 } else {
                     String filterPattern = charSequence.toString().toLowerCase().trim();
-                    for (IViewModel item : fullData) {
-                        if (item.getSearchString().toLowerCase().contains(filterPattern)) {
-                            filteredList.add(item);
+                    if(filterPattern.trim().length() > 0) {
+                        for (IViewModel item : fullData) {
+                            if (item.getSearchString().toLowerCase().contains(filterPattern)) {
+                                filteredList.add(item);
+                            }
                         }
+                    } else {
+                        filteredList.addAll(fullData);
                     }
                 }
                 FilterResults results = new FilterResults();
@@ -60,7 +67,6 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
     @Override
     public SpecialAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewHolder v = null;
-
         switch (this.type) {
             case Advert:
                 v = new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.ad_recyclerview, parent, false));
@@ -80,18 +86,18 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
     @Override
     public void onBindViewHolder(SpecialAdapter.ViewHolder holder, int position) {
         if (type == Type.Advert) {
-            AdvertViewModel avm = (AdvertViewModel) data.get(position);
+            AdvertViewModel avm = (AdvertViewModel) this.data.get(position);
             holder.tv_title.setText(avm.getTitle());
             holder.tv_desc.setText(avm.getDesc());
             holder.tv_loc.setText(avm.getLoc());
             holder.tv_price.setText(avm.getPrice());
             holder.tv_type.setText((avm.getType() == AdvertViewModel.TYPE.RENT ? context.getResources().getString(R.string.rent) : context.getResources().getString(R.string.sell)));
         } else if (type == Type.Discussion) {
-            MailViewModel mvm = (MailViewModel) data.get(position);
+            MailViewModel mvm = (MailViewModel) this.data.get(position);
             holder.tv_title.setText(mvm.getTitle());
             holder.tv_name_contact.setText(mvm.getContactName());
         } else if (type == Type.Message) {
-            MessageViewModel mvm = (MessageViewModel) data.get(position);
+            MessageViewModel mvm = (MessageViewModel) this.data.get(position);
             holder.tv_author.setText(mvm.getAuthor());
             holder.tv_message.setText(mvm.getContent());
         }
@@ -139,7 +145,14 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
                 tv_author = itemView.findViewById(R.id.msg_tv_author);
                 tv_message = itemView.findViewById(R.id.msg_tv_msg);
             }
-
         }
+    }
+
+    public ArrayList<IViewModel> getData(){
+        return this.data;
+    }
+
+    public void setDataAffichage(){
+        this.data = fullData;
     }
 }

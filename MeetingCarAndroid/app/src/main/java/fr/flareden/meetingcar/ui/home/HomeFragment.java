@@ -112,7 +112,7 @@ public class HomeFragment extends Fragment {
                 boolean touch = gd.onTouchEvent(e);
                 if (child != null && touch) {
                     int pos = rv.getChildAdapterPosition(child);
-                    AdvertViewModel avm = (AdvertViewModel) data.get(pos);
+                    AdvertViewModel avm = (AdvertViewModel) adapter.getData().get(pos);
 
                     Bundle b = new Bundle();
                     b.putInt("idAnnonce", avm.getId());
@@ -144,6 +144,7 @@ public class HomeFragment extends Fragment {
                         (a.isLocation() ? AdvertViewModel.TYPE.RENT : AdvertViewModel.TYPE.SELL)));
             }
             getActivity().runOnUiThread(() -> {
+                this.adapter.setDataAffichage();
                 this.adapter.notifyDataSetChanged();
             });
         });
