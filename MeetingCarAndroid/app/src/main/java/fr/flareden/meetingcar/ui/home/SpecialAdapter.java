@@ -153,6 +153,6 @@ public class SpecialAdapter extends RecyclerView.Adapter<SpecialAdapter.ViewHold
     }
 
     public void setDataAffichage(){
-        this.data = fullData;
+        this.data = new ArrayList<>(fullData);
     }
 }
