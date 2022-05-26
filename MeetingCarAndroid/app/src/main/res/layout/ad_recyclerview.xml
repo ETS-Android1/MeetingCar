@@ -23,26 +23,6 @@
         android:textStyle="bold" />
 
     <View
-        android:id="@+id/rv_div_2"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="4dp"
-        android:background="?android:attr/listDivider" />
-
-    <ImageView
-        android:id="@+id/rv_iv_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/desc_img"
-        android:maxWidth="100dp"
-        android:maxHeight="100dp"
-        android:scaleType="fitCenter"
-        tools:srcCompat="@drawable/ic_launcher_background" />
-
-    <View
         android:id="@+id/rv_div_3"
         android:layout_width="match_parent"
         android:layout_height="2dp"
