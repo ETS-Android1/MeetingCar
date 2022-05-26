@@ -14,7 +14,6 @@ public class FollowFragment extends HomeFragment {
 
     @Override
     protected void queryData(int idClient) {
-        //TODO : for now return history
         if(idClient >= 0){
             CommunicationWebservice.getINSTANCE().getAnnoncesFollow(idClient, 0, liste -> {
                 for(Annonce a : liste){

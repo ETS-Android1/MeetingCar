@@ -603,7 +603,6 @@ public class CommunicationWebservice {
 
     public void getAnnoncesFollow(int idClient, int page, @NonNull IListAnnonceLoaderHandler callback) {
         if (page >= 0) {
-
             new Thread(() -> {
                 ArrayList<Annonce> liste = new ArrayList<>();
                 try {
