@@ -27,6 +27,7 @@ public class MailFragment extends HomeFragment {
                     super.data.add(new MailViewModel(a));
                 }
                 getActivity().runOnUiThread(() -> {
+                    super.adapter.setDataAffichage();
                     super.adapter.notifyDataSetChanged();
                 });
             });

@@ -58,7 +58,6 @@ public class StatistiqueFragment extends Fragment {
                 navController.navigate(R.id.nav_home);
             } else {
                 binding.tvStatsTitre.setText(a.getTitle());
-
                 CommunicationWebservice.getINSTANCE().getVisites(a, visites -> {
                     int max = 0;
                     SortedMap<String, Integer> values = new TreeMap<>();
@@ -99,26 +98,19 @@ public class StatistiqueFragment extends Fragment {
                             stringBuffer.append(((int) Float.parseFloat(o.toString())));
                             return stringBuffer;
                         }
-
                         @Override
-                        public Object parseObject(String s, ParsePosition parsePosition) {
-                            return null;
-                        }
+                        public Object parseObject(String s, ParsePosition parsePosition) {return null;}
                     });
                     binding.plotStats.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new Format() {
                         @Override
                         public StringBuffer format(Object o, StringBuffer stringBuffer, FieldPosition fieldPosition) {
                             String value = "" + ((int) Float.parseFloat(o.toString()));
-
-
                             stringBuffer.append(value.substring(6,8) + "/" + value.substring(4,6));
                             return stringBuffer;
                         }
 
                         @Override
-                        public Object parseObject(String s, ParsePosition parsePosition) {
-                            return null;
-                        }
+                        public Object parseObject(String s, ParsePosition parsePosition) {return null;}
                     });
                     binding.plotStats.redraw();
                     XYSeries serie = new SimpleXYSeries(Arrays.asList(xVals), Arrays.asList(yVals), "Visites");

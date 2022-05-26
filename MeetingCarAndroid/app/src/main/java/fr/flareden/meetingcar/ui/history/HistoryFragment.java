@@ -21,6 +21,7 @@ public class HistoryFragment extends HomeFragment {
                     super.data.add(new AdvertViewModel(a.getId(), a.getTitle(), a.getDesc(), a.getVendeur().getAdresse(), ""+a.getPrix(), (a.isLocation() ? AdvertViewModel.TYPE.RENT : AdvertViewModel.TYPE.SELL) ));
                 }
                 getActivity().runOnUiThread(() -> {
+                    super.adapter.setDataAffichage();
                     super.adapter.notifyDataSetChanged();
                 });
             });

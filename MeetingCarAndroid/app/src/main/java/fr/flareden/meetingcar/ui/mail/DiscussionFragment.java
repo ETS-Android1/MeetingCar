@@ -83,6 +83,7 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
     protected void queryData(Discussion d) {
         if (d != null) {
             CommunicationWebservice.getINSTANCE().getMessages(d, 0, this);
+
         }
     }
 
@@ -94,6 +95,7 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
 
         }
         getActivity().runOnUiThread(() -> {
+            adapter.setDataAffichage();
             adapter.notifyDataSetChanged();
         });
     }
@@ -104,6 +106,7 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
         System.out.println(s.getContenu());
         data.add(new MessageViewModel(s));
         getActivity().runOnUiThread(() -> {
+            adapter.setDataAffichage();
             adapter.notifyDataSetChanged();
         });
     }
