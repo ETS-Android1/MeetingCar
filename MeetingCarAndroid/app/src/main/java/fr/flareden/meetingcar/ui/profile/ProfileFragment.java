@@ -69,7 +69,6 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
             binding.profileTvEmail.setVisibility(View.GONE);
             binding.profileTvPhone.setVisibility(View.GONE);
             binding.profileFabEdit.setVisibility(View.GONE);
-            binding.profileBtnAnnounces.setVisibility(View.GONE);
 
             // VISIBLE
             binding.profileLayoutName.setVisibility(View.VISIBLE);
@@ -125,7 +124,6 @@ public class ProfileFragment extends Fragment implements IClientLoadingHandler {
         binding.profileTvEmail.setVisibility(View.VISIBLE);
         binding.profileTvPhone.setVisibility(View.VISIBLE);
         binding.profileFabEdit.setVisibility(View.VISIBLE);
-        binding.profileBtnAnnounces.setVisibility(View.VISIBLE);
     }
 
     public void checkEditProfile() {
