@@ -50,11 +50,11 @@ public class Annonce implements Serializable {
 
 
     public static Annonce fromJsonObject(JSONObject json) throws JSONException {
-        Client vendeur = new Client(json.getInt("vendeur"), json.getString("vendeur_nom"), json.optString("vendeur_prenom", ""), new Image(json.optInt("vendeur_photo", -1)));
+        Client vendeur = new Client(json.getInt("vendeur"), json.getString("vendeur_nom"), json.optString("vendeur_prenom", ""), new Image(json.optInt("vendeur_photo", -1)), json.optString("vendeur_adresse", ""));
         int idAcheteur = json.optInt("acheteur", -1);
         Client acheteur = null;
         if(idAcheteur >= 0){
-            acheteur = new Client(idAcheteur, json.getString("acheteur_nom"), json.optString("acheteur_prenom", ""), new Image(json.optInt("acheteur_photo", -1)));
+            acheteur = new Client(idAcheteur, json.getString("acheteur_nom"), json.optString("acheteur_prenom", ""), new Image(json.optInt("acheteur_photo", -1)), "");
         }
         String photosID = json.optString("images_id", "").trim();
         if(photosID.equalsIgnoreCase("null")){

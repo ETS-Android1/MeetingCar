@@ -58,13 +58,23 @@ public class Client {
         this.id = id;
     }
 
-
     public Client(int id, String nom, String prenom, Image image) {
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
         this.image = image;
         this.communications = null;
+        this.adresse = adresse;
+    }
+
+
+    public Client(int id, String nom, String prenom, Image image, String adresse) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.image = image;
+        this.communications = null;
+        this.adresse = adresse;
     }
 
 

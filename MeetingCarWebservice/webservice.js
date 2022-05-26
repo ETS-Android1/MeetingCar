@@ -247,7 +247,7 @@ app.get('/annonce/page/:page', function(req, res){
 	
 	if( page >= 0){
 		let limite = 20;
-		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
+		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, V.adresse as vendeur_adresse, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
 		+ " FROM annonce"
 		+ " INNER JOIN client as V ON V.id = annonce.vendeur"
 		+ " LEFT JOIN client as A ON A.id = annonce.acheteur" 
@@ -266,7 +266,7 @@ app.get('/annonce/user/:id/:page', function(req, res){
 	let page = parseInt(req.params.page);
 	if(idUser >= 0){
 		let limite = 20;
-		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
+		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, V.adresse as vendeur_adresse, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
 		+ " FROM annonce"
 		+ " INNER JOIN client as V ON V.id = annonce.vendeur"
 		+ " LEFT JOIN client as A ON A.id = annonce.acheteur" 
@@ -285,7 +285,7 @@ app.get('/annonce/purchased/:id/:page', function(req, res){
 	let page = parseInt(req.params.page);
 	if(idUser >= 0){
 		let limite = 20;
-		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
+		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, V.adresse as vendeur_adresse, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
 		+ " FROM annonce"
 		+ " INNER JOIN client as V ON V.id = annonce.vendeur"
 		+ " LEFT JOIN client as A ON A.id = annonce.acheteur" 
@@ -303,7 +303,7 @@ app.get('/annonce/purchased/:id/:page', function(req, res){
 app.get('/annonce/get/:id', function (req, res) {
 	let idVal = parseInt(req.params.id);
 	if(idVal >= 0){
-		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
+		let sql = "SELECT annonce.*, V.nom AS vendeur_nom, V.prenom AS vendeur_prenom, V.photo AS vendeur_photo, V.adresse as vendeur_adresse, A.nom AS acheteur_nom, A.prenom AS acheteur_prenom, A.photo AS acheteur_photo, GROUP_CONCAT(DISTINCT image_annonce_link.image SEPARATOR ',') AS images_id"
 		+ " FROM annonce"
 		+ " INNER JOIN client as V ON V.id = annonce.vendeur"
 		+ " LEFT JOIN client as A ON A.id = annonce.acheteur" 
