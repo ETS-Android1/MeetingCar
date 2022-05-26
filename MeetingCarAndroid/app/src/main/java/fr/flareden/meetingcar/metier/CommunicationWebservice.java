@@ -72,13 +72,13 @@ public class CommunicationWebservice {
     }
 
     // --- CLIENT ---
-    public void inscription(Client c, String password, Uri imageURI, ContentResolver resolver, IRegisterHandler callback) {
+    public void inscription(Client c, String password, boolean professionel, Uri imageURI, ContentResolver resolver, IRegisterHandler callback) {
         new Thread(() -> {
             IRegisterHandler.State state = IRegisterHandler.State.SERVER_ERROR;
             try {
                 int imageID = uploadImage(imageURI, resolver);
 
-                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "inscription").openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(Config.BASE_URL + "inscription/" + (professionel ? 1 : 0)).openConnection();
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setConnectTimeout(2500);
                 connection.setRequestMethod("POST");

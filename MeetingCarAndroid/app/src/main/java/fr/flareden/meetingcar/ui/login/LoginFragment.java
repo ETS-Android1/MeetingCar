@@ -216,8 +216,7 @@ public class LoginFragment extends Fragment implements IConnectHandler, IRegiste
         }
 
         Client c = new Client(-1, surname, name, email, phone, birthday, address);
-        CommunicationWebservice.getINSTANCE().inscription(c, password, imageURI, this.getActivity().getContentResolver(), this);
-
+        CommunicationWebservice.getINSTANCE().inscription(c, password, binding.cbProfessionalRegister.isChecked(), imageURI, this.getActivity().getContentResolver(), this);
     }
 
     public void askCancelRegister(View view) {

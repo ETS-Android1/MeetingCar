@@ -150,6 +150,12 @@
                     android:layout_height="wrap_content"
                     android:text="@string/profile_picture" />
 
+                <CheckBox
+                    android:id="@+id/cb_professional_register"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pro" />
+
                 <TextView
                     android:id="@+id/tv_required"
                     android:layout_width="match_parent"

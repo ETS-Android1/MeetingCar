@@ -442,9 +442,10 @@ app.get('/connection',function (req, res) {
 	}
 });
 
-app.post('/inscription', function(req,res){
+app.post('/inscription/:pro', function(req,res){
 	let obj = req.body;
 	let email = con.escape(obj.email);
+	let pro = parseInt(req.params.pro)
 	con.query("SELECT id FROM client WHERE email = " + email + " LIMIT 1", function (err, result) {
 		if(err) throw err;
 		if(result.length <= 0){
@@ -454,10 +455,14 @@ app.post('/inscription', function(req,res){
 			let date_naissance = con.escape(obj.date_naissance);
 			let telephone = con.escape(obj.telephone);
 			let adresse = con.escape(obj.adresse);
-			let idImage = con.escape(obj.image_id);
+			let idImage = parseInt(obj.image_id);
+			let imageValue = "" + idImage;
+			if(idImage < 0){
+				imageValue = "null";
+			}
 			
-			con.query("INSERT INTO `client`(`id`, `email`, `mot_de_passe`, `nom`, `prenom`, `telephone`, `date_naissance`, `photo`, `adresse`)"
-				+ "VALUES (null," + email + "," + password +"," + nom +"," + prenom+"," +telephone+"," + date_naissance+"," + idImage + "," + adresse+")"
+			con.query("INSERT INTO `client`(`id`, `email`, `mot_de_passe`, `nom`, `prenom`, `telephone`, `date_naissance`, `photo`, `adresse`, `pro`)"
+				+ "VALUES (null," + email + "," + password +"," + nom +"," + prenom+"," +telephone+"," + date_naissance+"," + imageValue + "," + adresse+"," + pro + ")"
 				, function (err, result) {
 					if(err) throw err;
 					res.json({result : "OK"});
