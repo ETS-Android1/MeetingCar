@@ -12,5 +12,6 @@
 	"https": {
 		"privateKey" : "/certs/privkey.pem",
 		"certificate" : "/certs/fullchain.pem"
-	}
+	},
+	"port" : 9000
 }

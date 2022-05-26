@@ -57,8 +57,8 @@ const authenticateJWT = (req, res, next) => {
 
 https
   .createServer(credentials, app)
-  .listen(9000, ()=>{
-    console.log('server is runing at port 9000')
+  .listen(access.port, ()=>{
+    console.log('server is runing at port ' + access.port)
   });
   
 
@@ -163,8 +163,9 @@ app.get('/discussion/one/:id/messages/:page', authenticateJWT,  function(req,res
 });
 
 app.get('/discussion/one/:id', authenticateJWT,  function(req,res){
-	let idDiscussion = parseInt(req.params.id);
 	let idUser = req.user.id;
+	
+	let idDiscussion = parseInt(req.params.id);
 	
 	if(idDiscussion >= 0){
 		let limite = 30;
