@@ -74,30 +74,24 @@ public class CreateAnnonceFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentCreateAnnonceBinding.inflate(inflater, container, false);
         Fragment self = this;
-        Metier.getINSTANCE().isLogin(new IConnectHandler() {
-            @Override
-            public void onConnectionSuccess(Client c, String hashedPassword, boolean isAutoConnect) {
-            }
-            @Override
-            public void onConnectionFail(boolean unknown) {
-            }
-            @Override
-            public void askIsLogin(boolean isLogin) {
-                if(!isLogin){
-                    NavController navController = NavHostFragment.findNavController(self);
-                    navController.popBackStack();
-                    navController.navigate(R.id.nav_home);
-                }
+        Metier.getINSTANCE().isLogin(isLogin -> {
+            if (!isLogin) {
+                NavController navController = NavHostFragment.findNavController(self);
+                navController.popBackStack();
+                navController.navigate(R.id.nav_home);
             }
         });
+
 
         binding.tfCreateAnnoncePrice.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
                 checkPrice(editable.toString());
@@ -119,6 +113,7 @@ public class CreateAnnonceFragment extends Fragment {
                 binding.butRemoveAnnonceImage.setImageTintList(getContext().getResources().getColorStateList(R.color.white, new ContextThemeWrapper(getContext(), R.style.Theme_MeetingCar).getTheme()));
                 binding.butRemoveAnnonceImage.setClickable(true);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
                 binding.butRemoveAnnonceImage.setBackgroundTintList(null);
@@ -128,7 +123,7 @@ public class CreateAnnonceFragment extends Fragment {
         });
 
         binding.butRemoveAnnonceImage.setOnClickListener(view -> {
-            if(selectedElement != null){
+            if (selectedElement != null) {
                 this.listImage.remove(selectedElement);
                 selectedElement = null;
                 binding.lvCreateAnnonceListImage.clearChoices();
@@ -148,7 +143,7 @@ public class CreateAnnonceFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void checkPrice(String entree){
+    private void checkPrice(String entree) {
 
        /*String withoutSpace = entree.trim().replaceAll("\\s+", "");
         if(withoutSpace.length() > 0) {
@@ -187,15 +182,15 @@ public class CreateAnnonceFragment extends Fragment {
 
     }
 
-    private void createAnnonceAction(){
+    private void createAnnonceAction() {
         String titre = binding.tfCreateAnnonceTitle.getEditText().getText().toString();
         String description = binding.tfCreateAnnonceDescription.getEditText().getText().toString();
         float price = Float.parseFloat(binding.tfCreateAnnoncePrice.getEditText().getText().toString().replaceAll("\\s+", ""));
         boolean location = binding.cbCreateAnnonceRental.isChecked();
-        Annonce a = new Annonce(-1, titre, description, price ,  Metier.getINSTANCE().getUtilisateur(), null, true, null, null, location, false);
+        Annonce a = new Annonce(-1, titre, description, price, Metier.getINSTANCE().getUtilisateur(), null, true, null, null, location, false);
         CommunicationWebservice.getINSTANCE().createAnnonce(a, this.listImage, getContext().getContentResolver(), (idAnnonce -> {
-            if(idAnnonce >= 0){
-                getActivity().runOnUiThread(()->{
+            if (idAnnonce >= 0) {
+                getActivity().runOnUiThread(() -> {
                     Bundle b = new Bundle();
                     b.putInt("idAnnonce", idAnnonce);
                     NavController navController = NavHostFragment.findNavController(this);

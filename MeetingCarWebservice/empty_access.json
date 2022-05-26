@@ -1,0 +1,12 @@
+{
+    "host": "",
+    "user": "",
+    "password": "",
+    "database": "meeting_car",
+	"secret": "",
+	"ssl": {
+        "ca": "/certs/ca.pem",
+        "key": "/certs/client-key.pem",
+        "cert": "/certs/client-cert.pem"
+    }
+}

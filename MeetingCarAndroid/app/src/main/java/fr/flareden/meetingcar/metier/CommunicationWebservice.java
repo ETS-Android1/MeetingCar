@@ -47,6 +47,7 @@ import fr.flareden.meetingcar.metier.listener.IDiscussionCreatedHandler;
 import fr.flareden.meetingcar.metier.listener.IDiscussionExistHandler;
 import fr.flareden.meetingcar.metier.listener.IImageReceivingHandler;
 import fr.flareden.meetingcar.metier.listener.IIsFollowHandler;
+import fr.flareden.meetingcar.metier.listener.IIsLoginHandler;
 import fr.flareden.meetingcar.metier.listener.IListAnnonceLoaderHandler;
 import fr.flareden.meetingcar.metier.listener.IMessageHandler;
 import fr.flareden.meetingcar.metier.listener.IMessageNotRead;
@@ -188,7 +189,7 @@ public class CommunicationWebservice {
         CONNECTED = false;
     }
 
-    public void isLogin(IConnectHandler callback) {
+    public void isLogin(IIsLoginHandler callback) {
         if (this.token.trim().length() <= 0) {
             callback.askIsLogin(false);
         } else {
@@ -1036,6 +1037,44 @@ public class CommunicationWebservice {
         new Thread(() -> {
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "buy/" + idAnnonce).openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestProperty("authorization", token);
+                connection.setRequestMethod("GET");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    String str = in.readLine();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    // --- Pro + ---
+
+    public void subscribeProPlus(){
+        new Thread(() -> {
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "subscribe/").openConnection();
+                connection.setConnectTimeout(2500);
+                connection.setRequestProperty("authorization", token);
+                connection.setRequestMethod("GET");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"))) {
+                    String str = in.readLine();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public void unSubscribeProPlus(){
+        new Thread(() -> {
+            try {
+                HttpsURLConnection connection = (HttpsURLConnection) new URL(BASE_URL + "unsubscribe/").openConnection();
                 connection.setConnectTimeout(2500);
                 connection.setRequestProperty("authorization", token);
                 connection.setRequestMethod("GET");

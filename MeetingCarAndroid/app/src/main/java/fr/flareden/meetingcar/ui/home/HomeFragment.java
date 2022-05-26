@@ -80,24 +80,11 @@ public class HomeFragment extends Fragment {
             navController.navigate(R.id.nav_create_announce);
         });
 
-        Metier.getINSTANCE().isLogin(new IConnectHandler() {
-            @Override
-            public void onConnectionSuccess(Client c, String hashedPassword, boolean isAutoConnect) {
-
-            }
-
-            @Override
-            public void onConnectionFail(boolean unknown) {
-
-            }
-
-            @Override
-            public void askIsLogin(boolean isLogin) {
-                if (isLogin) {
-                    getActivity().runOnUiThread(() -> {
-                        initFab(binding);
-                    });
-                }
+        Metier.getINSTANCE().isLogin(login -> {
+            if (login) {
+                getActivity().runOnUiThread(() -> {
+                    initFab(binding);
+                });
             }
         });
 

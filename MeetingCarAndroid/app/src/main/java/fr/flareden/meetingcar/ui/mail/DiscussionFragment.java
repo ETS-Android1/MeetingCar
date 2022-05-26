@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import fr.flareden.meetingcar.R;
 import fr.flareden.meetingcar.databinding.FragmentDiscussionBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
@@ -53,20 +56,13 @@ public class DiscussionFragment extends Fragment implements IMessageHandler{
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this.getActivity(), LinearLayoutManager.VERTICAL, false));
 
-        Metier.getINSTANCE().isLogin(new IConnectHandler() {
-            @Override
-            public void onConnectionSuccess(Client c, String hashedPassword, boolean isAutoConnect) {
-
-            }
-
-            @Override
-            public void onConnectionFail(boolean unknown) {
-
-            }
-
-            @Override
-            public void askIsLogin(boolean isLogin) {
-
+        Metier.getINSTANCE().isLogin(login -> {
+            if(!login){
+                getActivity().runOnUiThread(() -> {
+                    NavController navController = NavHostFragment.findNavController(this);
+                    navController.popBackStack();
+                    navController.navigate(R.id.nav_home);
+                });
             }
         });
 

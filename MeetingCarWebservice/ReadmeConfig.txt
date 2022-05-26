@@ -1,0 +1,1 @@
+Veuillez modifier le fichier empty_access.json selon votre configuration mySQL puis renommer le en access.json

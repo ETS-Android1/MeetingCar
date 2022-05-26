@@ -58,4 +58,7 @@
     <string name="send">Envoyer</string>
     <string name="message_sent">Message envoyé</string>
     <string name="statistics">Statistiques</string>
+    <string name="max">Maximum</string>
+    <string name="unsubscribe">Se désinscrire de Pro+</string>
+    <string name="subscribe">Passez à Pro+ !</string>
 </resources>

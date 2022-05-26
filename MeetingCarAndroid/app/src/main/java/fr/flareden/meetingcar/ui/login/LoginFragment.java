@@ -45,9 +45,10 @@ import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
+import fr.flareden.meetingcar.metier.listener.IIsLoginHandler;
 import fr.flareden.meetingcar.metier.listener.IRegisterHandler;
 
-public class LoginFragment extends Fragment implements IConnectHandler, IRegisterHandler {
+public class LoginFragment extends Fragment implements IConnectHandler, IRegisterHandler, IIsLoginHandler {
     private FragmentLoginBinding binding;
 
     private Drawable image_profile;

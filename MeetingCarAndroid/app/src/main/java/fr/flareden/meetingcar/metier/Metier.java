@@ -10,6 +10,7 @@ import fr.flareden.meetingcar.metier.entity.client.Client;
 import fr.flareden.meetingcar.metier.entity.messagerie.Messagerie;
 import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
+import fr.flareden.meetingcar.metier.listener.IIsLoginHandler;
 
 public class Metier {
     public static Metier INSTANCE = null;
@@ -44,7 +45,7 @@ public class Metier {
         }
     }
 
-    public void isLogin(IConnectHandler callback) {
+    public void isLogin(IIsLoginHandler callback) {
         if (this.utilisateur == null) {
             callback.askIsLogin(false);
         } else {

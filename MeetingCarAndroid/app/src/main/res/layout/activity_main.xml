@@ -24,6 +24,20 @@
         app:menu="@menu/activity_main_drawer">
 
         <Button
+            android:id="@+id/buttonProPlus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="54dp"
+            android:backgroundTint="@color/gold"
+            android:text="@string/subscribe"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Button
             android:id="@+id/buttonLogin"
             android:layout_gravity="bottom"
             android:text="@string/action_sign_in"

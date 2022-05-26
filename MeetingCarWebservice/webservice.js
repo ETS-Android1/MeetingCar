@@ -41,7 +41,6 @@ var con = mysql.createConnection({
 
 
 const authenticateJWT = (req, res, next) => {
-	console.log("AUTH");
     const token = req.headers.authorization;
     if (token) {
 		
@@ -164,6 +163,25 @@ app.get('/discussion/one/:id/messages/:page', authenticateJWT,  function(req,res
 	}
 });
 
+app.get('/discussion/one/:id', authenticateJWT,  function(req,res){
+	let idDiscussion = parseInt(req.params.id);
+	let idUser = req.user.id;
+	
+	if(idDiscussion >= 0){
+		let limite = 30;
+			con.query("SELECT discussion.*, Ann.titre AS annonce_title, Dest.nom AS dest_nom, Dest.prenom AS dest_prenom, Dest.photo AS dest_photo, Expe.nom AS exped_nom, Expe.prenom AS exped_prenom, Expe.photo AS exped_photo FROM discussion INNER JOIN annonce AS Ann ON Ann.id = id_annonce INNER JOIN client AS Dest ON Dest.id = id_destinataire LEFT JOIN client AS Expe ON Expe.id = id_expediteur WHERE id = " + idDiscussion + " AND (id_expediteur = " + idUser + " OR id_destinataire = " + idUser + ")" , function(err, result){
+				if(err){
+					res.json({error:"SQLError"});
+				} else {
+					res.json({result : result});
+				}
+		});
+	} else {
+		res.json({error:"NaN"});
+	}
+});
+
+
 app.post('/discussion/create', authenticateJWT, function(req, res){
 	let idUser = req.user.id;
 	let data = req.body;
@@ -211,6 +229,16 @@ app.post('/discussion/one/:id/sendMessage', authenticateJWT, function(req,res){
 	}
 	
 });
+
+app.get('/discussion/exist/:idAnnonce', authenticateJWT, function(req, res){
+	let idAnnonce = req.params.idAnnonce;	
+	let idClient = req.user.id;
+	con.query("SELECT id FROM discussion WHERE id_expediteur = " + idClient + " AND id_annonce = " + idAnnonce, function(err, result){
+		if(err) throw err;
+		res.json(result);
+	});
+});
+
 
 
 // --- ANNONCES ---
@@ -337,19 +365,42 @@ app.post('/annonce/update', authenticateJWT , function (req, res) {
 		res.json({error:"wrongVendeur"});
 	}
 });
-
-app.post('/annonce/addVisite/:id'), function(req, res){
-	let idAnnonce = parseInt(req.params.id);
-	let data = req.body;
+app.get('/annonce/visite/:idAnnonce/:horodatage/:idClient', function (req, res) {
+	let idAnnonce = parseInt(req.params.idAnnonce);
+	let horodatage = req.params.horodatage;
+	let idClient = parseInt(req.params.idClient);
+	
 	if(idAnnonce >= 0){
-	con.query('INSERT INTO visite SET id_annonce = '+formatSQL(idAnnonce)+' ,id_client = '+ formatSQL(data.client) + ',horodatage = ' +formatSQL(data.horodatage) + ',localisation = ' + data.localisation, function(err, result){
+		if(idClient >= 0){
+			con.query('INSERT INTO visite SET id_annonce = ' + idAnnonce +', id_client = '+ idClient + ', horodatage = ' + formatSQL(horodatage) + ', localisation = null' , function(err, result){
+				if(err) throw err;
+				res.json({id : result.insertId});
+			});
+		} else {
+			con.query('INSERT INTO visite SET id_annonce = ' + idAnnonce +', id_client = null, horodatage = ' + formatSQL(horodatage) + ', localisation = null' , function(err, result){
+				if(err) throw err;
+				res.json({id : result.insertId});
+			});
+		}
+	} else {
+		res.json({error : "WrongID"});
+	}
+});
+
+app.get('/annonce/getVisites/:idAnnonce', authenticateJWT, function(req, res){
+	let idAnnonce = parseInt(req.params.idAnnonce);
+	let idUser = req.user.id;
+
+	if(idAnnonce >= 0){
+		con.query('SELECT * FROM visite WHERE id_annonce = ' + idAnnonce + ' AND id_annonce IN (SELECT id FROM annonce WHERE vendeur = ' + idUser + ')' , function(err, result){
 			if(err) throw err;
-			res.json({id : result.insertId});
+			res.json({result : result});
 		});
 	} else {
 		res.json({error : "WrongID"});
 	}
-}
+});
+
 
 // --- CLIENTS ---
 
@@ -373,7 +424,7 @@ app.get('/connection',function (req, res) {
 	let username = con.escape(req.headers.username);
 	let password = "0x" + req.headers.password;
 	if(username.length > 0 && password.length > 0){
-		con.query("SELECT id, email, nom, prenom, telephone, date_naissance, photo, adresse FROM client WHERE email = " + username + " AND mot_de_passe = " + password + " LIMIT 1", function (err, result) {
+		con.query("SELECT * FROM client WHERE email = " + username + " AND mot_de_passe = " + password + " LIMIT 1", function (err, result) {
 			if (err) throw err;
 			if(result.length > 0){
 				let utilisateur = result[0];
@@ -454,6 +505,63 @@ app.post('/update/client', authenticateJWT, function(req, res){
 	});
 });
 
+// --- FOLLOWS ---
+
+app.get('/isFollowing/:idAnnonce', authenticateJWT, function(req, res){
+	let idAnnonce = req.params.idAnnonce;	
+	let idClient = req.user.id;
+	con.query("SELECT COUNT(id_annonce) AS following FROM follow WHERE id_annonce = " + idAnnonce + " AND id_client = " + idClient, function(err, result){
+		if(err) throw err;
+		res.json(result[0]);
+	});
+});
+
+app.get('/follow/:idAnnonce', authenticateJWT , function(req, res){
+	let idAnnonce = req.params.idAnnonce;	
+	let idClient = req.user.id;
+	con.query("INSERT INTO `follow`(`id_client`, `id_annonce`) VALUES (" + idClient + "," + idAnnonce + ")", function(err, result){
+		if(err) throw err;
+		res.end();
+	});
+});
+
+app.get('/unfollow/:idAnnonce', authenticateJWT , function(req, res){
+	let idAnnonce = req.params.idAnnonce;	
+	let idClient = req.user.id;
+	con.query("DELETE FROM `follow` WHERE id_client = " + idClient+ " AND id_annonce = " + idAnnonce, function(err, result){
+		if(err) throw err;
+		res.end();
+	});
+});
+
+// --- BUY ---
+
+app.get('/buy/:idAnnonce', authenticateJWT , function(req, res){
+	let idAnnonce = req.params.idAnnonce;	
+	let idClient = req.user.id;
+	con.query("UPDATE annonce SET acheteur = " + idClient + " WHERE id = " + idAnnonce, function(err, result){
+		if(err) throw err;
+		res.end();
+	});
+});
+
+// --- Subscribe ---
+
+app.get('/subscribe', authenticateJWT , function(req, res){
+	let idClient = req.user.id;
+	con.query("UPDATE client SET abonner = 1 WHERE id = " + idClient, function(err, result){
+		if(err) throw err;
+		res.end();
+	});
+});
+
+app.get('/unsubscribe', authenticateJWT , function(req, res){
+	let idClient = req.user.id;
+	con.query("UPDATE client SET abonner = 0 WHERE id = " + idClient, function(err, result){
+		if(err) throw err;
+		res.end();
+	});
+});
 
 
 con.connect(function (err) {

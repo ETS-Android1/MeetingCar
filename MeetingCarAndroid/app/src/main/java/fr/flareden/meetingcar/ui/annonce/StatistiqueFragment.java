@@ -56,11 +56,16 @@ public class StatistiqueFragment extends Fragment {
             } else {
                 binding.tvStatsTitre.setText(a.getTitle());
                 CommunicationWebservice.getINSTANCE().getVisites(a, visites -> {
+                    int max = 0;
                     SortedMap<String, Integer> values = new TreeMap<>();
                     for(Visite v : visites){
                        String dateString = v.getHorodatage().substring(0,8);
                        if(values.containsKey(dateString)){
-                           values.put(dateString, values.get(dateString) + 1);
+                           int val = values.get(dateString) + 1;
+                           values.put(dateString, val);
+                           if(max < val){
+                               max = val;
+                           }
                        } else {
                            values.put(dateString, 1);
                        }
@@ -78,10 +83,12 @@ public class StatistiqueFragment extends Fragment {
                     }
                     XYSeries serie = new SimpleXYSeries(Arrays.asList(xVals), Arrays.asList(yVals), "oui");
                     LineAndPointFormatter format = new LineAndPointFormatter(Color.RED, Color.GREEN, Color.BLUE, null);
+                    final int maxFinal = max;
                     getActivity().runOnUiThread(() -> {
                         binding.plotStats.clear();
                         binding.plotStats.addSeries(serie, format);
                         binding.plotStats.redraw();
+                        binding.tvStatsMax.setText("" + maxFinal);
                     });
                 });
             }

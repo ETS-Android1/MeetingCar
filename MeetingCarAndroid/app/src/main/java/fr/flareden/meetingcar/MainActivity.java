@@ -1,5 +1,6 @@
 package fr.flareden.meetingcar;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,10 +28,12 @@ import fr.flareden.meetingcar.databinding.ActivityMainBinding;
 import fr.flareden.meetingcar.metier.CommunicationWebservice;
 import fr.flareden.meetingcar.metier.Metier;
 import fr.flareden.meetingcar.metier.entity.client.Client;
+import fr.flareden.meetingcar.metier.entity.client.Professionnel;
 import fr.flareden.meetingcar.metier.listener.IClientChangeHandler;
 import fr.flareden.meetingcar.metier.listener.IConnectHandler;
+import fr.flareden.meetingcar.metier.listener.IIsLoginHandler;
 
-public class MainActivity extends AppCompatActivity implements IClientChangeHandler, IConnectHandler {
+public class MainActivity extends AppCompatActivity implements IClientChangeHandler, IConnectHandler, IIsLoginHandler {
     // NAVIGATION DRAWER
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -80,10 +83,37 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
                 drawer.closeDrawer(Gravity.LEFT);
 
                 FragmentManager fm = this.getSupportFragmentManager();
-                for(int i = 0 ; i<fm.getBackStackEntryCount() ; i++){
+                for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
                     fm.popBackStack();
                 }
             }
+        });
+
+        MainActivity self = this;
+
+        findViewById(R.id.buttonProPlus).setOnClickListener(view -> {
+            Metier.getINSTANCE().isLogin(login -> {
+                if (login) {
+                    if (Metier.getINSTANCE().getUtilisateur().getClass() == Professionnel.class) {
+                        Button pro = findViewById(R.id.buttonProPlus);
+                        Professionnel user = (Professionnel) Metier.getINSTANCE().getUtilisateur();
+                        runOnUiThread(() -> {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(self);
+                            builder.setMessage(R.string.areyousure).setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+                                if (user.isAbonner()) {
+                                    user.setAbonner(false);
+                                    CommunicationWebservice.getINSTANCE().unSubscribeProPlus();
+                                    runOnUiThread(() -> pro.setText(R.string.subscribe));
+                                } else {
+                                    user.setAbonner(true);
+                                    CommunicationWebservice.getINSTANCE().subscribeProPlus();
+                                    runOnUiThread(() -> pro.setText(R.string.unsubscribe));
+                                }
+                            }).setNegativeButton(R.string.no, null).show();
+                        });
+                    }
+                }
+            });
         });
         Metier.getINSTANCE().addOnClientChange(this);
     }
@@ -119,6 +149,19 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
                 // SET BUTTON LOGIN
                 Button b = findViewById(R.id.buttonLogin);
                 b.setText(R.string.disconnect);
+
+                Button pro = findViewById(R.id.buttonProPlus);
+                if (c.getClass() == Professionnel.class) {
+                    Professionnel tmp = (Professionnel) c;
+                    if (tmp.isAbonner()) {
+                        pro.setText(R.string.unsubscribe);
+                    } else {
+                        pro.setText(R.string.subscribe);
+                    }
+                    pro.setVisibility(View.VISIBLE);
+                } else {
+                    pro.setVisibility(View.GONE);
+                }
             } else {
                 // SET PLACEHOLDER IMG
                 ImageView iv = findViewById(R.id.profile_image);
@@ -133,6 +176,9 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
                 // SET BUTTON LOGIN
                 Button b = findViewById(R.id.buttonLogin);
                 b.setText(R.string.action_sign_in);
+
+                Button pro = findViewById(R.id.buttonProPlus);
+                pro.setVisibility(View.GONE);
             }
         });
     }
@@ -155,8 +201,22 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
 
     @Override
     public void onConnectionSuccess(Client c, String hashedPassword, boolean isAutoConnect) {
-        if(isAutoConnect){
+        if (isAutoConnect) {
             Metier.getINSTANCE().setUtilisateur(c);
+
+            runOnUiThread(() -> {
+                Button pro = findViewById(R.id.buttonProPlus);
+                if (c.getClass() == Professionnel.class) {
+                    if (((Professionnel) c).isAbonner()) {
+                        pro.setText(R.string.unsubscribe);
+                    } else {
+                        pro.setText(R.string.subscribe);
+                    }
+                    pro.setVisibility(View.VISIBLE);
+                } else {
+                    pro.setVisibility(View.GONE);
+                }
+            });
         }
     }
 
@@ -166,18 +226,22 @@ public class MainActivity extends AppCompatActivity implements IClientChangeHand
         editor.remove("email");
         editor.remove("password");
         editor.remove("date");
+        runOnUiThread(() -> {
+            Button pro = findViewById(R.id.buttonProPlus);
+            pro.setVisibility(View.GONE);
+        });
     }
 
     @Override
     public void askIsLogin(boolean isLogin) {
-        if(!isLogin){
+        if (!isLogin) {
             SharedPreferences sp = this.getSharedPreferences("auto_connect", Context.MODE_PRIVATE);
             String email = sp.getString("email", null);
             String pass = sp.getString("password", null);
             String date = sp.getString("date", null);
 
             //Toast.makeText(getApplicationContext(),"EMAIL : " + email+ "\n PASS : " + pass + "\n DATE : " + date, Toast.LENGTH_SHORT ).show();
-            if(email != null && pass != null){
+            if (email != null && pass != null) {
                 CommunicationWebservice.getINSTANCE().connect(email, pass, this, true);
             }
         }
