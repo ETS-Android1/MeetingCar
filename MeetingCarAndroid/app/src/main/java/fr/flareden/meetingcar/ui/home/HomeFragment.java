@@ -63,7 +63,6 @@ public class HomeFragment extends Fragment {
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                adapter.getFilter().filter(s);
                 return false;
             }
 
@@ -71,6 +70,9 @@ public class HomeFragment extends Fragment {
             public boolean onQueryTextChange(String s) {
                 if(s.length() == 0){
                     adapter.setDataAffichage();
+                    adapter.notifyDataSetChanged();
+                } else {
+                    adapter.getFilter().filter(s);
                     adapter.notifyDataSetChanged();
                 }
                 return true;
