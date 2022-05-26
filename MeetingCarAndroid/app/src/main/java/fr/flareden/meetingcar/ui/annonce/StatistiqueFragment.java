@@ -1,6 +1,7 @@
 package fr.flareden.meetingcar.ui.annonce;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.StepMode;
 import com.androidplot.xy.XYGraphWidget;
 import com.androidplot.xy.XYSeries;
 import com.androidplot.xy.XYSeriesFormatter;
@@ -55,6 +58,7 @@ public class StatistiqueFragment extends Fragment {
                 navController.navigate(R.id.nav_home);
             } else {
                 binding.tvStatsTitre.setText(a.getTitle());
+
                 CommunicationWebservice.getINSTANCE().getVisites(a, visites -> {
                     int max = 0;
                     SortedMap<String, Integer> values = new TreeMap<>();
@@ -78,10 +82,46 @@ public class StatistiqueFragment extends Fragment {
                     Integer[] yVals = new Integer[size];
 
                     for(int i = 0; i < size;i++ ){
-                       xVals[i] = Integer.parseInt(entry.get(i).getKey());
+                        xVals[i] = Integer.parseInt(entry.get(i).getKey());
                         yVals[i] = entry.get(i).getValue();
                     }
-                    XYSeries serie = new SimpleXYSeries(Arrays.asList(xVals), Arrays.asList(yVals), "oui");
+
+                    int nbDate = (xVals[size-1] + 1) - (xVals[0] - 1);
+
+                    binding.plotStats.setRangeBoundaries(0, max+1, BoundaryMode.FIXED);
+
+                    binding.plotStats.setRangeStep(StepMode.INCREMENT_BY_FIT, (int)(max/5.0));
+                    binding.plotStats.setDomainBoundaries(xVals[0] - 1, xVals[size-1] + 1, BoundaryMode.FIXED);
+                    binding.plotStats.setDomainStep(StepMode.INCREMENT_BY_FIT, (int)(nbDate/5.0) +1);
+                    binding.plotStats.getGraph().getLineLabelStyle(XYGraphWidget.Edge.LEFT).setFormat(new Format() {
+                        @Override
+                        public StringBuffer format(Object o, StringBuffer stringBuffer, FieldPosition fieldPosition) {
+                            stringBuffer.append(((int) Float.parseFloat(o.toString())));
+                            return stringBuffer;
+                        }
+
+                        @Override
+                        public Object parseObject(String s, ParsePosition parsePosition) {
+                            return null;
+                        }
+                    });
+                    binding.plotStats.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new Format() {
+                        @Override
+                        public StringBuffer format(Object o, StringBuffer stringBuffer, FieldPosition fieldPosition) {
+                            String value = "" + ((int) Float.parseFloat(o.toString()));
+
+
+                            stringBuffer.append(value.substring(6,8) + "/" + value.substring(4,6));
+                            return stringBuffer;
+                        }
+
+                        @Override
+                        public Object parseObject(String s, ParsePosition parsePosition) {
+                            return null;
+                        }
+                    });
+                    binding.plotStats.redraw();
+                    XYSeries serie = new SimpleXYSeries(Arrays.asList(xVals), Arrays.asList(yVals), "Visites");
                     LineAndPointFormatter format = new LineAndPointFormatter(Color.RED, Color.GREEN, Color.BLUE, null);
                     final int maxFinal = max;
                     getActivity().runOnUiThread(() -> {
